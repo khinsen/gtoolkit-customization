@@ -31,8 +31,7 @@ GitHubOrganization class >> subclassForName: aString [
 { #category : #initializing }
 GitHubOrganization >> initializeFromRawData [
 	repositories := Dictionary new.
-	(STON fromString:
-		(ZnClient new get: (rawData at: 'repos_url')))
+	(self rawDataFromUrl: (rawData at: 'repos_url'))
 		do: [ :each |
 			| repo |
 			repo := GitHubRepository new rawData: each.
