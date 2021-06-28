@@ -1,22 +1,25 @@
 Class {
-	#name : #ReScienceOrganization,
-	#superclass : #GitHubOrganization,
+	#name : #ReScienceC,
+	#superclass : #Object,
 	#instVars : [
-		'repositories'
+		'ghOrganization'
+	],
+	#classInstVars : [
+		'ghOrganization'
 	],
 	#category : #'KhGToolkitCustomization-ReScience'
 }
 
-{ #category : #'instance creation' }
-ReScienceOrganization class >> isResponsibleFor: aString [
-	^ aString asLowercase = 'rescience'
+{ #category : #accessing }
+ReScienceC >> ghOrganization [
+	^ ghOrganization ifNil: [ ghOrganization := GitHubOrganization name: 'rescience' ]
 ]
 
 { #category : #accessing }
-ReScienceOrganization >> gtInReviewFor: aView [
+ReScienceC >> gtInReviewFor: aView [
 	<gtView>
 	| issues |
-	issues := (repositories at: 'submissions')
+	issues := (self ghOrganization repositories at: 'submissions')
 		openIssues
 		sorted: [ :a :b | a changeTime >= b changeTime ].
 	issues ifEmpty: [ ^ aView empty ].
@@ -30,14 +33,4 @@ ReScienceOrganization >> gtInReviewFor: aView [
 			text: [ :each | each durationSinceLastUpdate days ];
 		column: 'Title' text: #title;
 		yourself
-]
-
-{ #category : #accessing }
-ReScienceOrganization >> initializeFromRawData [
-	super initializeFromRawData.
-]
-
-{ #category : #accessing }
-ReScienceOrganization >> repositories [
-	^ repositories
 ]

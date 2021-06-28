@@ -1,6 +1,9 @@
 Class {
 	#name : #GitHubIssue,
 	#superclass : #GitHubEntity,
+	#instVars : [
+		'repository'
+	],
 	#category : #'KhGToolkitCustomization-GitHub'
 }
 
@@ -17,26 +20,31 @@ GitHubIssue >> gtCommentsFor: aView [
 		title: 'Comments';
 		priority: 1;
 		items: [ self comments ];
-		column: 'Author' text: #user;
+		column: 'User' text: #user;
 		column: 'Date' text: [ :each | each creationTime asDate asString ];
 		column: 'Body' text: #body;
-"			itemStencil: [ BrLabel new hMatchParent aptitude: BrGlamorousLabelAptitude ];
-			itemDataBinder: [ :anItemElement :anItem | anItemElement text: anItem body ];
-""		itemStencil: [ LeTextSnippet new asPreviewElement ];
-		itemDataBinder: [ :anItemElement :anItem |
-			anItemElement snippetViewModel snippetModel string: anItem body ];"
 		yourself
 ]
 
-{ #category : #printing }
-GitHubIssue >> gtDisplayOn: aStream [
-	aStream << self title
+{ #category : #accessing }
+GitHubIssue >> number [
+	^ rawData at: 'number'
 ]
 
 { #category : #printing }
 GitHubIssue >> printOn: aStream [
 	super printOn: aStream.
-	aStream << $(; << self title; << $)
+	aStream << $(; << self repository fullName; << $#; << self number asString; << $)
+]
+
+{ #category : #accessing }
+GitHubIssue >> repository [
+	^ repository
+]
+
+{ #category : #accessing }
+GitHubIssue >> repository: aGhRepository [
+	repository := aGhRepository
 ]
 
 { #category : #accessing }

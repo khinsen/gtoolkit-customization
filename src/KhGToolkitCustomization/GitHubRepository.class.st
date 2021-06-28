@@ -33,7 +33,10 @@ GitHubRepository >> name [
 { #category : #accessing }
 GitHubRepository >> openIssues [
 	^ (self rawDataFromUrl: (rawData at: 'issues_url'))
-		collect: [ :each | GitHubIssue new rawData: each ]
+		collect: [ :each |
+			GitHubIssue new
+				repository: self;
+				rawData: each ]
 ]
 
 { #category : #printing }
