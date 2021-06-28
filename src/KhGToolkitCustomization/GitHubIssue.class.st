@@ -27,6 +27,22 @@ GitHubIssue >> gtCommentsFor: aView [
 ]
 
 { #category : #accessing }
+GitHubIssue >> gtLabelsFor: aView [
+	<gtView>
+	^ aView list
+		title: 'Labels';
+		priority: 2;
+		items: [ self labels sort ];
+		yourself
+]
+
+{ #category : #accessing }
+GitHubIssue >> labels [
+	^ (rawData at: 'labels')
+		collect: [ :each | each at: 'name' ]
+]
+
+{ #category : #accessing }
 GitHubIssue >> number [
 	^ rawData at: 'number'
 ]

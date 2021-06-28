@@ -26,8 +26,19 @@ GitHubRepository >> gtOpenIssuesFor: aView [
 ]
 
 { #category : #accessing }
+GitHubRepository >> labels [
+	^ (rawData at: 'labels')
+		collect: [ :each | each at: 'name' ]
+]
+
+{ #category : #accessing }
 GitHubRepository >> name [
 	^ ($/ split: self fullName) second
+]
+
+{ #category : #accessing }
+GitHubRepository >> numberOfOpenIssues [
+	^ rawData at: 'open_issues'
 ]
 
 { #category : #accessing }

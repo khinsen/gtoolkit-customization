@@ -1,6 +1,9 @@
 Class {
 	#name : #GitHubIssueComment,
 	#superclass : #GitHubEntity,
+	#instVars : [
+		'user'
+	],
 	#category : #'KhGToolkitCustomization-GitHub'
 }
 
@@ -42,5 +45,7 @@ GitHubIssueComment >> printOn: aStream [
 
 { #category : #accessing }
 GitHubIssueComment >> user [
-	^ (rawData at: 'user') at: 'login'
+	^ user ifNil: [
+		user := GitHubUser
+			login: ((rawData at: 'user') at: 'login') ]
 ]

@@ -12,7 +12,7 @@ Class {
 
 { #category : #accessing }
 ReScienceC >> ghOrganization [
-	^ ghOrganization ifNil: [ ghOrganization := GitHubOrganization name: 'rescience' ]
+	^ ghOrganization ifNil: [ ghOrganization := GitHubRepositoryOwner name: 'rescience' ]
 ]
 
 { #category : #accessing }
