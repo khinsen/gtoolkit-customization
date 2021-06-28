@@ -21,14 +21,12 @@ GitHubIssueComment >> body [
 { #category : #accessing }
 GitHubIssueComment >> gtCommentFor: aView [
 	<gtView>
-	^ aView forward
-		title: 'Comment';
+	^ aView explicit
+		title: 'Comment body';
 		priority: 1;
-		object: [ Dictionary
-					with: #user -> self user
-					with: #date -> self creationTime asDate
-					with: #body ->self body ];
-		view: #gtItemsFor:;
+		stencil: [
+			(LeTextSnippet new string: self body)
+				asPreviewElement];
 		yourself
 ]
 
@@ -37,9 +35,9 @@ GitHubIssueComment >> printOn: aStream [
 	super printOn: aStream.
 	aStream
 		<< $(;
-		<< self user;
+		<< self user login;
 		<< ', ';
-		<< self creationTime asString;
+		<< self creationTime asDate asString;
 		<< $)
 ]
 
