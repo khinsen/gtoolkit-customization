@@ -5,23 +5,27 @@ Class {
 }
 
 { #category : #accessing }
-GitHubIssue >> changeTime [
-	^ (rawData at: 'updated_at') asDateAndTime
+GitHubIssue >> comments [
+	^ (self rawDataFromUrl: (rawData at: 'comments_url'))
+		collect: [ :each | GitHubIssueComment new rawData: each ]
 ]
 
-{ #category : #accessing }
-GitHubIssue >> creationTime [
-	^ (rawData at: 'created_at') asDateAndTime
-]
-
-{ #category : #accessing }
-GitHubIssue >> durationSinceCreation [
-	^ DateAndTime now - self creationTime
-]
-
-{ #category : #accessing }
-GitHubIssue >> durationSinceLastUpdate [
-	^ DateAndTime now - self changeTime
+{ #category : #inspecting }
+GitHubIssue >> gtCommentsFor: aView [
+	<gtView>
+	^ aView columnedList
+		title: 'Comments';
+		priority: 1;
+		items: [ self comments ];
+		column: 'Author' text: #user;
+		column: 'Date' text: [ :each | each creationTime asDate asString ];
+		column: 'Body' text: #body;
+"			itemStencil: [ BrLabel new hMatchParent aptitude: BrGlamorousLabelAptitude ];
+			itemDataBinder: [ :anItemElement :anItem | anItemElement text: anItem body ];
+""		itemStencil: [ LeTextSnippet new asPreviewElement ];
+		itemDataBinder: [ :anItemElement :anItem |
+			anItemElement snippetViewModel snippetModel string: anItem body ];"
+		yourself
 ]
 
 { #category : #printing }
