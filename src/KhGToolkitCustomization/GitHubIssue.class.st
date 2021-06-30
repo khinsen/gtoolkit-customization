@@ -20,8 +20,12 @@ GitHubIssue >> gtCommentsFor: aView [
 		title: 'Comments';
 		priority: 1;
 		items: [ self comments ];
-		column: 'User' text: #user;
-		column: 'Date' text: [ :each | each creationTime asDate asString ];
+		column: 'User'
+			text: #user
+			width: 100;
+		column: 'Date'
+			text: [ :each | each creationTime asDate asString ]
+			width: 100;
 		column: 'Body' text: #body;
 		yourself
 ]

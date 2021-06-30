@@ -2,10 +2,22 @@ Class {
 	#name : #GitHubRepositoryOwner,
 	#superclass : #GitHubEntity,
 	#instVars : [
-		'repositories'
+		'repositories',
+		'avatarPicture',
+		'apiUrl'
 	],
 	#category : #'KhGToolkitCustomization-GitHub'
 }
+
+{ #category : #accessing }
+GitHubRepositoryOwner >> apiUrl [
+	^ apiUrl
+]
+
+{ #category : #accessing }
+GitHubRepositoryOwner >> apiUrl: anUrl [
+	apiUrl := anUrl
+]
 
 { #category : #accessing }
 GitHubRepositoryOwner >> avatarPicture [
@@ -16,6 +28,16 @@ GitHubRepositoryOwner >> avatarPicture [
 		get.
 	^ ImageReadWriter formFromStream:
 			client entity readStream
+]
+
+{ #category : #inspecting }
+GitHubRepositoryOwner >> gtAvatarPictureFor: aView [
+	<gtView>
+	^ aView explicit
+		title: 'Avatar';
+		priority: 9;
+		stencil: [ self avatarPicture asElement ]
+		yourself
 ]
 
 { #category : #accessing }
@@ -42,4 +64,12 @@ GitHubRepositoryOwner >> repositories [
 				repo := GitHubRepository new rawData: each.
 				repositories at: repo name put: repo ] ].
 	^ repositories
+]
+
+{ #category : #initializing }
+GitHubRepositoryOwner >> update [
+	self rawData:
+		(STON fromString:
+			(GitHubAPI new client
+				get: self apiUrl))
 ]

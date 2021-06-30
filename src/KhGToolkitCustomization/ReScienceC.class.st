@@ -34,7 +34,6 @@ ReScienceC >> gtInReviewFor: aView [
 			text: [ :each | ((self statusLabelsFor: each)) last ]
 			width: 100;
 		column: 'Title' text: #title;
-		send: #ghIssue;
 		yourself
 ]
 

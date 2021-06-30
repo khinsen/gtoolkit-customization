@@ -2,7 +2,8 @@ Class {
 	#name : #GitHubEntity,
 	#superclass : #Object,
 	#instVars : [
-		'rawData'
+		'rawData',
+		'timeStamp'
 	],
 	#category : #'KhGToolkitCustomization-GitHub'
 }
@@ -56,9 +57,15 @@ GitHubEntity >> gtDataFor: aView [
 GitHubEntity >> initializeFromRawData [
 ]
 
+{ #category : #testing }
+GitHubEntity >> isStale [
+	^ (timeStamp - DateAndTime now) > 1 hour
+]
+
 { #category : #initializing }
 GitHubEntity >> rawData: aDictionary [
 	rawData := aDictionary.
+	timeStamp := DateAndTime now.
 	self initializeFromRawData
 ]
 

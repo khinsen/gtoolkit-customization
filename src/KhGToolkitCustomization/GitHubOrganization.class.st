@@ -6,8 +6,15 @@ Class {
 
 { #category : #accessing }
 GitHubOrganization class >> name: aString [
-	^ self new
-		rawData: (STON fromString:
-						(GitHubAPI new client get:
-							'https://api.github.com/orgs/', aString))
+	^ self allInstances
+		detect: [ :each | each name = aString and: [ each isStale not ] ]
+		ifNone: [
+			self new
+				apiUrl: 'https://api.github.com/orgs/', aString;
+				update ]
+]
+
+{ #category : #accessing }
+GitHubOrganization >> name [
+	^ rawData at: 'login'
 ]

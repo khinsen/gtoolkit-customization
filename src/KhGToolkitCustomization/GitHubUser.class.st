@@ -7,12 +7,11 @@ Class {
 { #category : #'instance creation' }
 GitHubUser class >> login: aString [
 	^ self allInstances
-		detect: [ :each | each login = aString ]
+		detect: [ :each | each login = aString and: [ each isStale not ] ]
 		ifNone: [
 			self new
-				rawData: (STON fromString:
-								(GitHubAPI new client get:
-									'https://api.github.com/users/', aString)) ]
+				apiUrl: 'https://api.github.com/users/', aString;
+				update ]
 ]
 
 { #category : #accessing }
