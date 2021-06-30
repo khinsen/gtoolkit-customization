@@ -23,12 +23,16 @@ ReScienceC >> gtInReviewFor: aView [
 	^ aView columnedList
 		title: 'In Review';
 		priority: 3;
-		items: [ submissions sorted: [ :a :b | a changeTime >= b changeTime ] ];
+		items: [ submissions sorted: [ :a :b | a creationTime >= b creationTime ] ];
 		column: 'Days in review'
-			text: [ :each | each durationSinceCreation days ];
-		column: 'since last update'
-			text: [ :each | each durationSinceLastUpdate days ];
-		column: 'Status' text: [ :each | each statusLabels last ];
+			text: [ :each | each durationSinceCreation days ]
+			width: 100;
+		column: 'last comment'
+			text: [ :each | each comments last durationSinceLastUpdate days ]
+			width: 100;
+		column: 'Status'
+			text: [ :each | ((self statusLabelsFor: each)) last ]
+			width: 100;
 		column: 'Title' text: #title;
 		send: #ghIssue;
 		yourself
@@ -38,6 +42,11 @@ ReScienceC >> gtInReviewFor: aView [
 ReScienceC >> initialize [
 	ghOrganization := GitHubOrganization name: 'rescience'.
 	submissions := (ghOrganization repositories at: 'submissions')
-					openIssues
-					collect: [ :each | ReScienceSubmission new ghIssue: each ].
+					openIssues.
+]
+
+{ #category : #accessing }
+ReScienceC >> statusLabelsFor: aGitHubIssue [
+	^ (aGitHubIssue labels select: [ :each | each beginsWith: '0' ])
+		sort: [ :a :b | a second <= b second ]	
 ]
