@@ -11,7 +11,7 @@ GitHubUser class >> login: aString [
 		ifNone: [
 			self new
 				rawData: (STON fromString:
-								(ZnClient new get:
+								(GitHubAPI new client get:
 									'https://api.github.com/users/', aString)) ]
 ]
 

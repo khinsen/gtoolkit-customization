@@ -10,9 +10,10 @@ Class {
 { #category : #accessing }
 GitHubRepositoryOwner >> avatarPicture [
 	| client |
-	(client := ZnClient new)
-				url: (rawData at: 'avatar_url');
-				get.
+	client := GitHubAPI new client.
+	client
+		url: (rawData at: 'avatar_url');
+		get.
 	^ ImageReadWriter formFromStream:
 			client entity readStream
 ]

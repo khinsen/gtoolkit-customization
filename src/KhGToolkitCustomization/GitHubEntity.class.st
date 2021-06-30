@@ -67,5 +67,5 @@ GitHubEntity >> rawDataFromUrl: aString [
 	| url curlyBrace |
 	url := aString copyUpTo: ${.
 	^ STON fromString:
-		(ZnClient new get: url)
+		(GitHubAPI new client get: url)
 ]

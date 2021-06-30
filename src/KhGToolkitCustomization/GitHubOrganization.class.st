@@ -8,6 +8,6 @@ Class {
 GitHubOrganization class >> name: aString [
 	^ self new
 		rawData: (STON fromString:
-						(ZnClient new get:
+						(GitHubAPI new client get:
 							'https://api.github.com/orgs/', aString))
 ]
