@@ -1,10 +1,10 @@
 Class {
-	#name : #GitHubUser,
-	#superclass : #GitHubRepositoryOwner,
-	#category : #'KhGToolkitCustomization-GitHub'
+	#name : 'GitHubUser',
+	#superclass : 'GitHubRepositoryOwner',
+	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GitHubUser class >> login: aString [
 	^ self allInstances
 		detect: [ :each | each login = aString and: [ each isStale not ] ]
@@ -14,17 +14,17 @@ GitHubUser class >> login: aString [
 				update ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubUser >> gtDisplayOn: aStream [
 	aStream << self login
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubUser >> login [
 	^ rawData at: 'login'
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 GitHubUser >> printOn: aStream [
 	super printOn: aStream.
 	aStream << $(; << self login ; << $)

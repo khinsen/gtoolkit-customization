@@ -1,25 +1,25 @@
 Class {
-	#name : #GitHubRepositoryOwner,
-	#superclass : #GitHubEntity,
+	#name : 'GitHubRepositoryOwner',
+	#superclass : 'GitHubEntity',
 	#instVars : [
 		'repositories',
 		'avatarPicture',
 		'apiUrl'
 	],
-	#category : #'KhGToolkitCustomization-GitHub'
+	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubRepositoryOwner >> apiUrl [
 	^ apiUrl
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubRepositoryOwner >> apiUrl: anUrl [
 	apiUrl := anUrl
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubRepositoryOwner >> avatarPicture [
 	| client |
 	client := GitHubAPI new client.
@@ -30,7 +30,7 @@ GitHubRepositoryOwner >> avatarPicture [
 			client entity readStream
 ]
 
-{ #category : #inspecting }
+{ #category : 'inspecting' }
 GitHubRepositoryOwner >> gtAvatarPictureFor: aView [
 	<gtView>
 	^ aView explicit
@@ -40,7 +40,7 @@ GitHubRepositoryOwner >> gtAvatarPictureFor: aView [
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubRepositoryOwner >> gtRepositoriesFor: aView [
 	<gtView>
 	^ aView columnedList
@@ -54,7 +54,7 @@ GitHubRepositoryOwner >> gtRepositoriesFor: aView [
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubRepositoryOwner >> repositories [
 	repositories ifNil: [
 		repositories := Dictionary new.
@@ -66,7 +66,7 @@ GitHubRepositoryOwner >> repositories [
 	^ repositories
 ]
 
-{ #category : #initializing }
+{ #category : 'initializing' }
 GitHubRepositoryOwner >> update [
 	self rawData:
 		(STON fromString:

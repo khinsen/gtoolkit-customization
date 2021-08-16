@@ -1,14 +1,14 @@
 Class {
-	#name : #GitHubAPI,
-	#superclass : #Object,
+	#name : 'GitHubAPI',
+	#superclass : 'Object',
 	#instVars : [
 		'login',
 		'apiToken'
 	],
-	#category : #'KhGToolkitCustomization-GitHub'
+	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubAPI >> client [
 	| client |
 	client := ZnClient new.
@@ -16,12 +16,12 @@ GitHubAPI >> client [
 	^ client
 ]
 
-{ #category : #initializing }
+{ #category : 'initializing' }
 GitHubAPI >> initialize [
 	self loadApiToken
 ]
 
-{ #category : #initializing }
+{ #category : 'initializing' }
 GitHubAPI >> loadApiToken [
 	| apiTokenFile |
 	apiTokenFile := FileLocator preferences / 'pharo' / 'github-access-token.txt'.

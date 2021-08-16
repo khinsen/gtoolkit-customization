@@ -1,24 +1,24 @@
 Class {
-	#name : #GitHubIssueComment,
-	#superclass : #GitHubEntity,
+	#name : 'GitHubIssueComment',
+	#superclass : 'GitHubEntity',
 	#instVars : [
 		'user'
 	],
-	#category : #'KhGToolkitCustomization-GitHub'
+	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubIssueComment >> asElement [
 	^ (LeTextSnippet new string: self body)
 		asPreviewElement
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubIssueComment >> body [
 	^ rawData at: 'body'
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubIssueComment >> gtCommentFor: aView [
 	<gtView>
 	^ aView explicit
@@ -30,7 +30,7 @@ GitHubIssueComment >> gtCommentFor: aView [
 		yourself
 ]
 
-{ #category : #printing }
+{ #category : 'printing' }
 GitHubIssueComment >> printOn: aStream [
 	super printOn: aStream.
 	aStream
@@ -41,7 +41,7 @@ GitHubIssueComment >> printOn: aStream [
 		<< $)
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GitHubIssueComment >> user [
 	^ user ifNil: [
 		user := GitHubUser

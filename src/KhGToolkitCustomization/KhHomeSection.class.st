@@ -1,10 +1,10 @@
 Class {
-	#name : #KhHomeSection,
-	#superclass : #GtHomeSection,
-	#category : #'KhGToolkitCustomization-Home'
+	#name : 'KhHomeSection',
+	#superclass : 'GtHomeSection',
+	#category : 'KhGToolkitCustomization-Home'
 }
 
-{ #category : #'api - instantiation' }
+{ #category : 'api - instantiation' }
 KhHomeSection >> create [
 	| sectionContainer cardsContainer |
 	sectionContainer := self newSectionContainer.
