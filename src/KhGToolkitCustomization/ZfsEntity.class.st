@@ -20,6 +20,17 @@ ZfsEntity >> command: aString arguments: argArray columns: aBoolean [
 ]
 
 { #category : 'accessing' }
+ZfsEntity >> gtSnapshotsFor: aView [
+	<gtView>
+	^ aView list
+		title: 'Snapshots';
+		priority: 1;
+		items: [ self snapshots ];
+		itemText: [ :each | each name ];
+		yourself
+]
+
+{ #category : 'accessing' }
 ZfsEntity >> name [
 	^ name
 ]
