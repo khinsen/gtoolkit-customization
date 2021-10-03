@@ -1,6 +1,9 @@
 Class {
 	#name : 'ZfsEntity',
 	#superclass : 'Object',
+	#instVars : [
+		'name'
+	],
 	#category : 'KhGToolkitCustomization-ZFS'
 }
 
@@ -14,6 +17,22 @@ ZfsEntity >> command: aString arguments: argArray columns: aBoolean [
 				select: [ :each | each isEmpty not ].
 	aBoolean ifFalse: [ ^ lines ].
 	^ lines collect: [ :each | Character tab split: each ]
+]
+
+{ #category : 'accessing' }
+ZfsEntity >> name [
+	^ name
+]
+
+{ #category : 'accessing' }
+ZfsEntity >> name: aString [
+	name := aString
+]
+
+{ #category : 'accessing' }
+ZfsEntity >> printOn: aStream [
+	super printOn: aStream.
+	aStream << $(; << name; << $).
 ]
 
 { #category : 'accessing' }
