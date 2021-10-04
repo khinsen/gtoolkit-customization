@@ -1,6 +1,6 @@
 Class {
-	#name : 'GitHubEntity',
-	#superclass : 'Object',
+	#name : #GitHubEntity,
+	#superclass : #Object,
 	#instVars : [
 		'rawData',
 		'timeStamp'
@@ -8,27 +8,27 @@ Class {
 	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubEntity >> changeTime [
 	^ (rawData at: 'updated_at') asDateAndTime
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubEntity >> creationTime [
 	^ (rawData at: 'created_at') asDateAndTime
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubEntity >> durationSinceCreation [
 	^ DateAndTime now - self creationTime
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubEntity >> durationSinceLastUpdate [
 	^ DateAndTime now - self changeTime
 ]
 
-{ #category : 'inspecting' }
+{ #category : #inspecting }
 GitHubEntity >> gtActionWebBrowseFor: anAction [
 	<gtAction>
 	| url |
@@ -42,7 +42,7 @@ GitHubEntity >> gtActionWebBrowseFor: anAction [
 				label: 'Open in Web browser' translated ]
 ]
 
-{ #category : 'inspecting' }
+{ #category : #inspecting }
 GitHubEntity >> gtDataFor: aView [
 	<gtView>
 	^ aView forward
@@ -53,23 +53,23 @@ GitHubEntity >> gtDataFor: aView [
 		yourself
 ]
 
-{ #category : 'initializing' }
+{ #category : #initializing }
 GitHubEntity >> initializeFromRawData [
 ]
 
-{ #category : 'testing' }
+{ #category : #testing }
 GitHubEntity >> isStale [
 	^ (timeStamp - DateAndTime now) > 1 hour
 ]
 
-{ #category : 'initializing' }
+{ #category : #initializing }
 GitHubEntity >> rawData: aDictionary [
 	rawData := aDictionary.
 	timeStamp := DateAndTime now.
 	self initializeFromRawData
 ]
 
-{ #category : 'operating' }
+{ #category : #operating }
 GitHubEntity >> rawDataFromUrl: aString [
 	| url curlyBrace |
 	url := aString copyUpTo: ${.

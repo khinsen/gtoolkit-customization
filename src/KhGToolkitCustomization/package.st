@@ -1,1 +1,1 @@
-Package { #name : 'KhGToolkitCustomization' }
+Package { #name : #KhGToolkitCustomization }

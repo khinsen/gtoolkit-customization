@@ -1,10 +1,10 @@
 Class {
-	#name : 'ZfsSnapshot',
-	#superclass : 'ZfsEntity',
+	#name : #ZfsSnapshot,
+	#superclass : #ZfsEntity,
 	#category : 'KhGToolkitCustomization-ZFS'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ZfsSnapshot class >> name: aString [
 	^ self new
 		name: aString;

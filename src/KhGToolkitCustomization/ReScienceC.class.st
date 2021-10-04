@@ -1,6 +1,6 @@
 Class {
-	#name : 'ReScienceC',
-	#superclass : 'Object',
+	#name : #ReScienceC,
+	#superclass : #Object,
 	#instVars : [
 		'ghOrganization',
 		'submissions'
@@ -11,12 +11,12 @@ Class {
 	#category : 'KhGToolkitCustomization-ReScience'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ReScienceC >> ghOrganization [
 	^ ghOrganization
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ReScienceC >> gtInReviewFor: aView [
 	<gtView>
 	submissions ifEmpty: [ ^ aView empty ].
@@ -41,14 +41,14 @@ ReScienceC >> gtInReviewFor: aView [
 		yourself
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ReScienceC >> initialize [
 	ghOrganization := GitHubOrganization name: 'rescience'.
 	submissions := (ghOrganization repositories at: 'submissions')
 					openIssues.
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ReScienceC >> statusLabelsFor: aGitHubIssue [
 	^ (aGitHubIssue labels select: [ :each | each beginsWith: '0' ])
 		sort: [ :a :b | a second <= b second ]	

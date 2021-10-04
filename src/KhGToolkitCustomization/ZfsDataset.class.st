@@ -1,17 +1,17 @@
 Class {
-	#name : 'ZfsDataset',
-	#superclass : 'ZfsEntity',
-	#category : 'KhGToolkitCustomization-ZFS'
+	#name : #ZfsDataset,
+	#superclass : #ZfsEntity,
+	#category : #'KhGToolkitCustomization-ZFS'
 }
 
-{ #category : 'instance creation' }
+{ #category : #'instance creation' }
 ZfsDataset class >> name: aString [
 	^ self new
 		name: aString;
 		yourself
 ]
 
-{ #category : 'accessing' }
+{ #category : #inspecting }
 ZfsDataset >> gtSnapshotsFor: aView [
 	<gtView>
 	^ aView list
@@ -22,12 +22,12 @@ ZfsDataset >> gtSnapshotsFor: aView [
 		yourself
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ZfsDataset >> pool [
 	^ ZfsPool name: (#/ split: name) first
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 ZfsDataset >> snapshots [
 	^ (self zfs: { 'list'. '-Hpr'. '-o'. 'name'. '-t'. 'snapshot'. self name } columns: false)
 		collect: [ :each | ZfsSnapshot name: each ]

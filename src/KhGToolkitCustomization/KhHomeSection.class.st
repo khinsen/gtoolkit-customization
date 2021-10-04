@@ -1,10 +1,10 @@
 Class {
-	#name : 'KhHomeSection',
-	#superclass : 'GtHomeSection',
+	#name : #KhHomeSection,
+	#superclass : #GtHomeSection,
 	#category : 'KhGToolkitCustomization-Home'
 }
 
-{ #category : 'api - instantiation' }
+{ #category : #'api - instantiation' }
 KhHomeSection >> create [
 	| sectionContainer cardsContainer |
 	sectionContainer := self newSectionContainer.
@@ -17,7 +17,7 @@ KhHomeSection >> create [
 	^ sectionContainer
 ]
 
-{ #category : 'api - instantiation' }
+{ #category : #'api - instantiation' }
 KhHomeSection >> guixCard [
 	^ self
 		  newToolCardWithTitle: 'Guix Packages'
@@ -31,7 +31,7 @@ KhHomeSection >> guixCard [
 		  description: 'Guix package catalog'
 ]
 
-{ #category : 'api - instantiation' }
+{ #category : #'api - instantiation' }
 KhHomeSection >> reScienceCard [
 	^ self
 		  newToolCardWithTitle: 'ReScience'
@@ -45,7 +45,7 @@ KhHomeSection >> reScienceCard [
 		  description: 'ReScience C dashboard'
 ]
 
-{ #category : 'api - instantiation' }
+{ #category : #'api - instantiation' }
 KhHomeSection >> zfsCard [
 	^ self
 		  newToolCardWithTitle: 'ZFS Pools'

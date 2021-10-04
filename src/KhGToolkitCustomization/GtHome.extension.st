@@ -1,6 +1,6 @@
-Extension { #name : 'GtHome' }
+Extension { #name : #GtHome }
 
-{ #category : '*KhGToolkitCustomization' }
+{ #category : #'*KhGToolkitCustomization' }
 GtHome >> khHomeSection [
 	<gtHomeSection>
 	^ KhHomeSection new 

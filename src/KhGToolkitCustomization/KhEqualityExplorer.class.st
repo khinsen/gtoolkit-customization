@@ -1,6 +1,6 @@
 Class {
-	#name : 'KhEqualityExplorer',
-	#superclass : 'Object',
+	#name : #KhEqualityExplorer,
+	#superclass : #Object,
 	#instVars : [
 		'object2',
 		'object1'
@@ -8,7 +8,7 @@ Class {
 	#category : 'KhGToolkitCustomization-Tools'
 }
 
-{ #category : 'instance creation' }
+{ #category : #'instance creation' }
 KhEqualityExplorer class >> for: object1 and: object2 [
 	^ self new
 		object1: object1;
@@ -16,14 +16,14 @@ KhEqualityExplorer class >> for: object1 and: object2 [
 		yourself
 ]
 
-{ #category : 'comparing' }
+{ #category : #comparing }
 KhEqualityExplorer >> equalityOf: a and: b [
 	a == b ifTrue: [ ^ { #same. a. b } ].
 	a = b ifTrue: [ ^ { #equal. a. b } ].
 	^ { #notEqual. a. b }
 ]
 
-{ #category : 'inspecting' }
+{ #category : #inspecting }
 KhEqualityExplorer >> equalityReport [
 	| slots1 slots2 commonSlots report |
 	#(object class slotNames slotValues).
@@ -41,7 +41,7 @@ KhEqualityExplorer >> equalityReport [
 	 ^ report
 ]
 
-{ #category : 'inspecting' }
+{ #category : #inspecting }
 KhEqualityExplorer >> gtReportFor: aView [
 	<gtView>
 	^ aView columnedList
@@ -59,12 +59,12 @@ KhEqualityExplorer >> gtReportFor: aView [
 		yourself.
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 KhEqualityExplorer >> object1: anObject [
 	object1 := anObject
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 KhEqualityExplorer >> object2: anObject [
 	object2 := anObject
 ]

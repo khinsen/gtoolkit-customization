@@ -1,6 +1,6 @@
-Extension { #name : 'SequenceableCollection' }
+Extension { #name : #SequenceableCollection }
 
-{ #category : '*KhGToolkitCustomization' }
+{ #category : #'*KhGToolkitCustomization' }
 SequenceableCollection >> khExploreEqualityWith: anObject [
 	| report |
 	anObject isSequenceable ifFalse: [ ^ super khExploreEqualityWith: anObject ].

@@ -1,6 +1,6 @@
-Extension { #name : 'Dictionary' }
+Extension { #name : #Dictionary }
 
-{ #category : '*KhGToolkitCustomization' }
+{ #category : #'*KhGToolkitCustomization' }
 Dictionary >> khExploreEqualityWith: anObject [
 	| report commonKeys |
 	anObject isDictionary ifFalse: [ ^ super khExploreEqualityWith: anObject ].

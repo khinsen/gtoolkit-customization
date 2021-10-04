@@ -1,19 +1,19 @@
 Class {
-	#name : 'GitHubIssue',
-	#superclass : 'GitHubEntity',
+	#name : #GitHubIssue,
+	#superclass : #GitHubEntity,
 	#instVars : [
 		'repository'
 	],
 	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubIssue >> comments [
 	^ (self rawDataFromUrl: (rawData at: 'comments_url'))
 		collect: [ :each | GitHubIssueComment new rawData: each ]
 ]
 
-{ #category : 'inspecting' }
+{ #category : #inspecting }
 GitHubIssue >> gtCommentsFor: aView [
 	<gtView>
 	^ aView columnedList
@@ -30,7 +30,7 @@ GitHubIssue >> gtCommentsFor: aView [
 		yourself
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubIssue >> gtLabelsFor: aView [
 	<gtView>
 	^ aView list
@@ -40,34 +40,34 @@ GitHubIssue >> gtLabelsFor: aView [
 		yourself
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubIssue >> labels [
 	^ (rawData at: 'labels')
 		collect: [ :each | each at: 'name' ]
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubIssue >> number [
 	^ rawData at: 'number'
 ]
 
-{ #category : 'printing' }
+{ #category : #printing }
 GitHubIssue >> printOn: aStream [
 	super printOn: aStream.
 	aStream << $(; << self repository fullName; << $#; << self number asString; << $)
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubIssue >> repository [
 	^ repository
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubIssue >> repository: aGhRepository [
 	repository := aGhRepository
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubIssue >> title [
 	^ rawData at: 'title'
 ]

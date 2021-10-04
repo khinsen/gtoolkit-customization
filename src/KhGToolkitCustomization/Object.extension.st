@@ -1,6 +1,6 @@
-Extension { #name : 'Object' }
+Extension { #name : #Object }
 
-{ #category : '*KhGToolkitCustomization' }
+{ #category : #'*KhGToolkitCustomization' }
 Object >> khExploreEqualityWith: anObject [
 	| report commonSlots slots1 slots2 |
 	slots1 := self class allInstVarNames sorted.

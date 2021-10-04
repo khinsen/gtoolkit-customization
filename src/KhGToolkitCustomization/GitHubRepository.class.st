@@ -1,18 +1,18 @@
 Class {
-	#name : 'GitHubRepository',
-	#superclass : 'GitHubEntity',
+	#name : #GitHubRepository,
+	#superclass : #GitHubEntity,
 	#instVars : [
 		'name'
 	],
 	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubRepository >> fullName [
 	^ rawData at: 'full_name'
 ]
 
-{ #category : 'inspecting' }
+{ #category : #inspecting }
 GitHubRepository >> gtOpenIssuesFor: aView [
 	<gtView>
 	| issues |
@@ -25,23 +25,23 @@ GitHubRepository >> gtOpenIssuesFor: aView [
 		yourself
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubRepository >> labels [
 	^ (rawData at: 'labels')
 		collect: [ :each | each at: 'name' ]
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubRepository >> name [
 	^ ($/ split: self fullName) second
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubRepository >> numberOfOpenIssues [
 	^ rawData at: 'open_issues'
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubRepository >> openIssues [
 	^ (self rawDataFromUrl: (rawData at: 'issues_url'))
 		collect: [ :each |
@@ -50,7 +50,7 @@ GitHubRepository >> openIssues [
 				rawData: each ]
 ]
 
-{ #category : 'printing' }
+{ #category : #printing }
 GitHubRepository >> printOn: aStream [
 	super printOn: aStream.
 	aStream << '('; << self fullName; << ')'.

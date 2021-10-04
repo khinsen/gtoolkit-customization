@@ -1,10 +1,10 @@
 Class {
-	#name : 'GitHubOrganization',
-	#superclass : 'GitHubRepositoryOwner',
+	#name : #GitHubOrganization,
+	#superclass : #GitHubRepositoryOwner,
 	#category : 'KhGToolkitCustomization-GitHub'
 }
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubOrganization class >> name: aString [
 	^ self allInstances
 		detect: [ :each | each name = aString and: [ each isStale not ] ]
@@ -14,7 +14,7 @@ GitHubOrganization class >> name: aString [
 				update ]
 ]
 
-{ #category : 'accessing' }
+{ #category : #accessing }
 GitHubOrganization >> name [
 	^ rawData at: 'login'
 ]
