@@ -12,6 +12,7 @@ KhHomeSection >> create [
 	cardsContainer := self newCardsContainer.
 	cardsContainer addChild: self reScienceCard.
 	cardsContainer addChild: self guixCard.
+	cardsContainer addChild: self zfsCard.
 	sectionContainer addChild: cardsContainer.
 	^ sectionContainer
 ]
@@ -42,4 +43,18 @@ KhHomeSection >> reScienceCard [
 				  with: (GtInspector createOn: ReScienceC new)
 				  from: card ]
 		  description: 'ReScience C dashboard'
+]
+
+{ #category : 'api - instantiation' }
+KhHomeSection >> zfsCard [
+	^ self
+		  newToolCardWithTitle: 'ZFS Pools'
+		  icon: ((ZnEasy getPng: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/OpenZFS_logo.svg/358px-OpenZFS_logo.svg.png')
+		  		 asGrayScale scaledToSize: 64 @ 64) asElement
+		  action: [ :card | 
+			  self
+				  showSpaceWithTitle: 'ZFS Pools'
+				  with: (GtInspector createOn: Zfs pools)
+				  from: card ]
+		  description: 'ZFS Pools'
 ]
