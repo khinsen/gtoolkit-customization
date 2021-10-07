@@ -21,6 +21,14 @@ ZfsSnapshot >> datasetOrPool [
 ]
 
 { #category : #accessing }
+ZfsSnapshot >> files [
+	| datasetFiles |
+	datasetFiles := self datasetOrPool files.
+	datasetFiles ifNil: [ ^ nil ].
+	^ datasetFiles / '.zfs' / 'snapshot' / self snapname
+]
+
+{ #category : #accessing }
 ZfsSnapshot >> snapname [
 	^ ($@ split: name) second
 ]

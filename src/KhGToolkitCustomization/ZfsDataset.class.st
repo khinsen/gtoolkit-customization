@@ -12,6 +12,12 @@ ZfsDataset class >> name: aString [
 ]
 
 { #category : #accessing }
+ZfsDataset >> files [
+	((self properties at: #mounted) first = #yes) ifFalse: [ ^ nil ].
+	^ (self properties at: #mountpoint) first asFileReference
+]
+
+{ #category : #accessing }
 ZfsDataset >> pool [
 	^ ZfsPool name: (#/ split: name) first
 ]

@@ -29,6 +29,23 @@ ZfsEntity >> dailySnapshots [
 	^ self snapshots select: [ :each | each snapname beginsWith: 'zfs-auto-snap_daily-' ]
 ]
 
+{ #category : #accessing }
+ZfsEntity >> files [
+	^ nil
+]
+
+{ #category : #inspecting }
+ZfsEntity >> gtFilesFor: aView [
+	<gtView>
+	self files ifNil: [ ^ aView empty ].
+	^ aView forward
+		title: 'Files';
+		priority: 7;
+		object: [ self files ];
+		view: #gtTreeFor:;
+		yourself
+]
+
 { #category : #inspecting }
 ZfsEntity >> gtPropertiesFor: aView [
 	<gtView>
