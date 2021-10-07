@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+ZfsEntity >> autoSnapshots [
+	^ self snapshots select: [ :each | each snapname beginsWith: 'zfs-auto-snap' ]
+]
+
+{ #category : #accessing }
 ZfsEntity >> command: aString arguments: argArray columns: aBoolean [
 	| proc lines |
 	proc := GtUnixSubprocess command: aString arguments: argArray.
@@ -17,6 +22,11 @@ ZfsEntity >> command: aString arguments: argArray columns: aBoolean [
 				select: [ :each | each isEmpty not ].
 	aBoolean ifFalse: [ ^ lines ].
 	^ lines collect: [ :each | Character tab split: each ]
+]
+
+{ #category : #accessing }
+ZfsEntity >> dailySnapshots [
+	^ self snapshots select: [ :each | each snapname beginsWith: 'zfs-auto-snap_daily-' ]
 ]
 
 { #category : #inspecting }
@@ -32,6 +42,28 @@ ZfsEntity >> gtPropertiesFor: aView [
 		column: 'Source' text: [ :each | each value second ];
 		send: [ :each | each value first ];
 		yourself
+]
+
+{ #category : #inspecting }
+ZfsEntity >> gtSnapshotsFor: aView [
+	<gtView>
+	self snapshots ifEmpty: [ ^ aView empty ].
+	^ aView list
+		title: 'Snapshots';
+		priority: 1;
+		items: [ self snapshots ];
+		itemText: [ :each | each name ];
+		yourself
+]
+
+{ #category : #accessing }
+ZfsEntity >> hourlySnapshots [
+	^ self snapshots select: [ :each | each snapname beginsWith: 'zfs-auto-snap_hourly-' ]
+]
+
+{ #category : #accessing }
+ZfsEntity >> monthlySnapshots [
+	^ self snapshots select: [ :each | each snapname beginsWith: 'zfs-auto-snap_monthly-' ]
 ]
 
 { #category : #accessing }
@@ -57,6 +89,17 @@ ZfsEntity >> properties [
 	^ (columns collect: [ :each |
 		each second -> { each third. each fourth } ])
 		asDictionary
+]
+
+{ #category : #accessing }
+ZfsEntity >> snapshots [
+	^ (self zfs: { 'list'. '-Hpr'. '-o'. 'name'. '-t'. 'snapshot'. self name } columns: false)
+		collect: [ :each | ZfsSnapshot name: each ]
+]
+
+{ #category : #accessing }
+ZfsEntity >> weeklySnapshots [
+	^ self snapshots select: [ :each | each snapname beginsWith: 'zfs-auto-snap_weekly-' ]
 ]
 
 { #category : #accessing }
