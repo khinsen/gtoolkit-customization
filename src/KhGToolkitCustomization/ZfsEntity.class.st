@@ -15,7 +15,7 @@ ZfsEntity >> autoSnapshots [
 { #category : #accessing }
 ZfsEntity >> command: aString arguments: argArray columns: aBoolean [
 	| proc lines |
-	proc := GtUnixSubprocess command: aString arguments: argArray.
+	proc := GtSubprocessWithInMemoryOutput command: aString arguments: argArray.
 	proc errorBlock: [ :aProcess | self error: aString, ' failed' ].
 	proc runAndWait.
 	lines := (Character lf split: proc stdout)
