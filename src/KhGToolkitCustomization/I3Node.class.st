@@ -23,6 +23,23 @@ I3Node >> = anotherNode [
 		and: [ self id = anotherNode id ]
 ]
 
+{ #category : #accessing }
+I3Node >> children [
+	^ rawData at: #nodes
+]
+
+{ #category : #inspecting }
+I3Node >> gtNodesFor: aView [
+	<gtView>
+	self children ifEmpty: [ ^ aView empty ].
+	^ aView forward
+		title: 'Children';
+		priority: 5;
+		object: [ self children ];
+		view: #gtItemsFor:;
+		yourself
+]
+
 { #category : #inspecting }
 I3Node >> gtRawDataFor: aView [
 	<gtView>
