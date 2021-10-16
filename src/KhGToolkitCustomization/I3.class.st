@@ -44,6 +44,11 @@ I3 class >> tree [
 ]
 
 { #category : #accessing }
+I3 class >> version [
+	^ (self sendMessageAndParseResult: 'get_version')
+]
+
+{ #category : #accessing }
 I3 class >> workspaces [
 	^ (self sendMessageAndParseResult: 'get_workspaces')
 ]

@@ -2,7 +2,8 @@ Class {
 	#name : #I3Node,
 	#superclass : #Object,
 	#instVars : [
-		'rawData'
+		'rawData',
+		'children'
 	],
 	#category : #'KhGToolkitCustomization-I3'
 }
@@ -25,11 +26,11 @@ I3Node >> = anotherNode [
 
 { #category : #accessing }
 I3Node >> children [
-	^ rawData at: #nodes
+	^ children
 ]
 
 { #category : #inspecting }
-I3Node >> gtNodesFor: aView [
+I3Node >> gtChildrenFor: aView [
 	<gtView>
 	self children ifEmpty: [ ^ aView empty ].
 	^ aView forward
@@ -73,7 +74,6 @@ I3Node >> printOn: aStream [
 { #category : #accessing }
 I3Node >> rawData: jsonData [
 	rawData := jsonData.
-	rawData at: #nodes put:
-		((rawData at: #nodes) collect: [ :each |
-			I3Node fromRawData:  each ])
+	children := ((rawData at: #nodes) collect: [ :each |
+					I3Node fromRawData:  each ])
 ]
