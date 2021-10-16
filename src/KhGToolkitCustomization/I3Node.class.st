@@ -36,8 +36,10 @@ I3Node >> gtChildrenFor: aView [
 	^ aView forward
 		title: 'Children';
 		priority: 5;
-		object: [ self children ];
-		view: #gtItemsFor:;
+		object: [ (self children at: #floating)
+					ifEmpty: [ self children at: #tiling ]
+					ifNotEmpty: [ self children ] ];
+		view: #gtTreeFor:;
 		yourself
 ]
 
@@ -47,8 +49,8 @@ I3Node >> gtRawDataFor: aView [
 	^ aView forward
 		title: 'JSON data';
 		priority: 9;
-		object: [ rawData ];
-		view: #gtItemsFor:;
+		object: [ self rawData ];
+		view: #gtTreeFor:;
 		yourself
 ]
 
@@ -72,8 +74,19 @@ I3Node >> printOn: aStream [
 ]
 
 { #category : #accessing }
+I3Node >> rawData [
+	^ rawData
+]
+
+{ #category : #accessing }
 I3Node >> rawData: jsonData [
 	rawData := jsonData.
-	children := ((rawData at: #nodes) collect: [ :each |
-					I3Node fromRawData:  each ])
+	children := Dictionary new.
+	children at: #tiling
+		put: ((rawData at: #nodes) collect: [ :each |
+				I3Node fromRawData: each ]).
+	children at: #floating
+		put: ((rawData at: #'floating_nodes') collect: [ :each |
+				I3Node fromRawData: each ]).
+
 ]
