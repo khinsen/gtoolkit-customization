@@ -23,6 +23,11 @@ ZtEntity >> gtJsonDataFor: aView [
 ZtEntity >> initializeFromRawData [
 ]
 
+{ #category : #accessing }
+ZtEntity >> key [
+	^ rawData at: #key
+]
+
 { #category : #initializing }
 ZtEntity >> rawData: aDictionary [
 	rawData := aDictionary.

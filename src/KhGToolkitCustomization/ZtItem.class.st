@@ -52,11 +52,6 @@ ZtItem >> itemType [
 ]
 
 { #category : #accessing }
-ZtItem >> key [
-	^ rawData at: #key
-]
-
-{ #category : #accessing }
 ZtItem >> printOn: aStream [
 	super printOn: aStream.
 	aStream

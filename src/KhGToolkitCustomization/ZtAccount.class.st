@@ -39,6 +39,23 @@ ZtAccount >> apiToken: aString [
 ]
 
 { #category : #accessing }
+ZtAccount >> collections [
+	| client itemCount someItems linkHeader |
+	client :=
+		ZtApiClient new
+			beOneShot;
+			account: self;
+			path: 'users/', userId, '/collections'.
+	someItems := client get collect: [ :each |
+					ZtCollection new
+						"storage: self storage;"
+						rawData: each ].
+	itemCount := (client response headers at: 'Total-Results') asInteger.
+	linkHeader := client response headers at: 'Link'.
+	^ { itemCount. someItems. linkHeader }
+]
+
+{ #category : #accessing }
 ZtAccount >> groups [
 	^ (ZtApiClient new
 		beOneShot;
@@ -73,6 +90,23 @@ ZtAccount >> storage [
 { #category : #accessing }
 ZtAccount >> storage: aZtStorage [
 	storage := aZtStorage
+]
+
+{ #category : #accessing }
+ZtAccount >> topLevelItems [
+	| client itemCount someItems linkHeader |
+	client :=
+		ZtApiClient new
+			beOneShot;
+			account: self;
+			path: 'users/', userId, '/items/top'.
+	someItems := client get collect: [ :each |
+					ZtItem new
+						storage: self storage;
+						rawData: each ].
+	itemCount := (client response headers at: 'Total-Results') asInteger.
+	linkHeader := client response headers at: 'Link'.
+	^ { itemCount. someItems. linkHeader }
 ]
 
 { #category : #accessing }
