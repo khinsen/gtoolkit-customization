@@ -39,11 +39,12 @@ ZtAccount >> apiToken: aString [
 
 { #category : #accessing }
 ZtAccount >> groups [
-	^ ZtApiClient new
+	^ (ZtApiClient new
 		beOneShot;
 		account: self;
 		path: 'users/', userId, '/groups';
-		get.
+		get) collect: [ :each |
+			ZtGroup new rawData: each ].
 ]
 
 { #category : #accessing }
@@ -54,7 +55,8 @@ ZtAccount >> items [
 			beOneShot;
 			account: self;
 			path: 'users/', userId, '/items'.
-	someItems := client get.
+	someItems := client get collect: [ :each |
+					ZtItem new rawData: each ].
 	itemCount := (client response headers at: 'Total-Results') asInteger.
 	linkHeader := client response headers at: 'Link'.
 	^ { itemCount. someItems. linkHeader }
