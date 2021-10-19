@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'userId',
-		'apiToken'
+		'apiToken',
+		'storage'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
@@ -56,10 +57,22 @@ ZtAccount >> items [
 			account: self;
 			path: 'users/', userId, '/items'.
 	someItems := client get collect: [ :each |
-					ZtItem new rawData: each ].
+					ZtItem new
+						storage: self storage;
+						rawData: each ].
 	itemCount := (client response headers at: 'Total-Results') asInteger.
 	linkHeader := client response headers at: 'Link'.
 	^ { itemCount. someItems. linkHeader }
+]
+
+{ #category : #accessing }
+ZtAccount >> storage [
+	^ storage
+]
+
+{ #category : #accessing }
+ZtAccount >> storage: aZtStorage [
+	storage := aZtStorage
 ]
 
 { #category : #accessing }
