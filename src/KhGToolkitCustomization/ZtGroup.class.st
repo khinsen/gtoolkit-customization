@@ -1,8 +1,31 @@
 Class {
 	#name : #ZtGroup,
 	#superclass : #ZtEntity,
+	#instVars : [
+		'accessingMember'
+	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
+
+{ #category : #accessing }
+ZtGroup >> accessingMember [
+	^ accessingMember
+]
+
+{ #category : #accessing }
+ZtGroup >> accessingMember: aZtUser [
+	accessingMember := aZtUser
+]
+
+{ #category : #accessing }
+ZtGroup >> groupId [
+	^ rawData at: #id
+]
+
+{ #category : #accessing }
+ZtGroup >> library [
+	^ ZtGroupLibrary group: self
+]
 
 { #category : #accessing }
 ZtGroup >> name [

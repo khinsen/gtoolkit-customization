@@ -2,16 +2,10 @@ Class {
 	#name : #ZtApiClient,
 	#superclass : #ZnClient,
 	#instVars : [
-		'ztAccount'
+		'ztUser'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
-
-{ #category : #accessing }
-ZtApiClient >> account: aZtAccount [
-	ztAccount := aZtAccount.
-	self headerAt: 'Zotero-API-Key' put: ztAccount apiToken.
-]
 
 { #category : #accessing }
 ZtApiClient >> initialize [
@@ -22,4 +16,10 @@ ZtApiClient >> initialize [
 		headerAt: 'Zotero-API-Version' put: '3';
 		queryAt: 'format' put: 'json';
 		contentReader: [ :entity | NeoJSONReader fromString: entity contents ].
+]
+
+{ #category : #accessing }
+ZtApiClient >> user: aZtUser [
+	ztUser := aZtUser.
+	self headerAt: 'Zotero-API-Key' put: ztUser apiToken.
 ]
