@@ -9,37 +9,41 @@ Class {
 }
 
 { #category : #accessing }
+ZtLibrary >> clientForRequest: path start: firstIndex limit: anInteger [
+	^ ZtApiClient new
+		beOneShot;
+		user: self user;
+		path: self urlPrefix, path;
+		queryAt: #start put: firstIndex asString;
+		queryAt: #limit put: anInteger asString.
+]
+
+{ #category : #accessing }
 ZtLibrary >> collections [
-	| client itemCount someItems linkHeader |
-	client :=
-		ZtApiClient new
-			beOneShot;
-			user: self user;
-			path: self urlPrefix, '/collections'.
-	someItems := client get collect: [ :each |
-					ZtCollection new
-						"storage: self storage;"
-						rawData: each ].
-	itemCount := (client response headers at: 'Total-Results') asInteger.
-	linkHeader := client response headers at: 'Link'.
-	^ { itemCount. someItems. linkHeader }
+	^ (self multiRequest: '/collections') collect: [ :each |
+			ZtCollection new
+				"storage: self storage;"
+				rawData: each ]
 ]
 
 { #category : #accessing }
 ZtLibrary >> items [
-	| client itemCount someItems linkHeader |
-	client :=
-		ZtApiClient new
-			beOneShot;
-			user: self user;
-			path: self urlPrefix, '/items'.
-	someItems := client get collect: [ :each |
-					ZtItem new
-						storage: self storage;
-						rawData: each ].
-	itemCount := (client response headers at: 'Total-Results') asInteger.
-	linkHeader := client response headers at: 'Link'.
-	^ { itemCount. someItems. linkHeader }
+	^ (self multiRequest: '/items') collect: [ :each |
+			ZtItem new
+				storage: self storage;
+				rawData: each ]
+]
+
+{ #category : #accessing }
+ZtLibrary >> multiRequest: path [
+	| items client itemCount |
+	items := OrderedCollection new.
+	[
+		client := self clientForRequest: path start: items size limit: 100.
+		items addAll: client get.
+		itemCount := (client response headers at: 'Total-Results') asInteger.
+		items size < itemCount ] whileTrue.
+	^ items
 ]
 
 { #category : #accessing }
@@ -54,19 +58,10 @@ ZtLibrary >> storage: aZtStorage [
 
 { #category : #accessing }
 ZtLibrary >> topLevelItems [
-	| client itemCount someItems linkHeader |
-	client :=
-		ZtApiClient new
-			beOneShot;
-			user: self user;
-			path: self urlPrefix, '/items/top'.
-	someItems := client get collect: [ :each |
-					ZtItem new
-						storage: self storage;
-						rawData: each ].
-	itemCount := (client response headers at: 'Total-Results') asInteger.
-	linkHeader := client response headers at: 'Link'.
-	^ { itemCount. someItems. linkHeader }
+	^ (self multiRequest: '/items/top') collect: [ :each |
+			ZtItem new
+				storage: self storage;
+				rawData: each ]
 ]
 
 { #category : #accessing }
