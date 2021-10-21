@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'user'
 	],
-	#category : 'KhGToolkitCustomization-GitHub'
+	#category : #'KhGToolkitCustomization-GitHub'
 }
 
 { #category : #accessing }
@@ -28,6 +28,21 @@ GitHubIssueComment >> gtCommentFor: aView [
 			(LeTextSnippet new string: self body)
 				asPreviewElement];
 		yourself
+]
+
+{ #category : #accessing }
+GitHubIssueComment >> gtMentionsFor: aView [
+	<gtView>
+	^ aView list
+		title: 'Mentions';
+		priority: 2;
+		items: [ self mentions ];
+		yourself
+]
+
+{ #category : #accessing }
+GitHubIssueComment >> mentions [
+	^ GitHubParser usernamesFromText: self body
 ]
 
 { #category : #printing }
