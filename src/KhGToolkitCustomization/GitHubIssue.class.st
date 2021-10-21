@@ -70,9 +70,7 @@ GitHubIssue >> labels [
 
 { #category : #accessing }
 GitHubIssue >> mentions [
-	^ (self comments flatCollect: [ :each |
-		GitHubParser usernamesFromText: each body ]) asSet
-		collect: [ :each | GitHubUser login: each ]
+	^ (self comments flatCollect: #mentions) asSet
 ]
 
 { #category : #accessing }

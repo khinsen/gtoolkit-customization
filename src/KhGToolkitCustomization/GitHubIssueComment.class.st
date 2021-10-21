@@ -42,7 +42,8 @@ GitHubIssueComment >> gtMentionsFor: aView [
 
 { #category : #accessing }
 GitHubIssueComment >> mentions [
-	^ GitHubParser usernamesFromText: self body
+	^ (GitHubParser usernamesFromText: self body)
+		collect: [ :each | GitHubUser login: each allButFirst ]
 ]
 
 { #category : #printing }
