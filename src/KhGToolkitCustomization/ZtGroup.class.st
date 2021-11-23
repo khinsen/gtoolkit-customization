@@ -40,3 +40,8 @@ ZtGroup >> printOn: aStream [
 		<< self name;
 		<< $)
 ]
+
+{ #category : #syncing }
+ZtGroup >> syncWithServerAtVersion: anInteger [
+	(rawData at: #version) = anInteger ifTrue: [ ^ self ].
+]

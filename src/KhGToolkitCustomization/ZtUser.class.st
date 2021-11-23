@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'userId',
 		'apiToken',
-		'storage'
+		'storage',
+		'groups'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
@@ -39,7 +40,35 @@ ZtUser >> apiToken: aString [
 ]
 
 { #category : #accessing }
+ZtUser >> groupFromServer: anInteger [
+	| rawData |
+	rawData := ZtApiClient new
+		beOneShot;
+		user: self;
+		path: 'groups/', anInteger asString;
+		get.
+	^ ZtGroup new
+		accessingMember: self;
+		rawData: rawData;
+		yourself.
+]
+
+{ #category : #accessing }
+ZtUser >> groupVersionsFromServer [
+	^ (ZtApiClient new
+		beOneShot;
+		user: self;
+		path: 'users/', userId, '/groups/?format=versions';
+		get)
+]
+
+{ #category : #accessing }
 ZtUser >> groups [
+	^ groups
+]
+
+{ #category : #accessing }
+ZtUser >> groupsFromServer [
 	^ (ZtApiClient new
 		beOneShot;
 		user: self;
@@ -51,9 +80,29 @@ ZtUser >> groups [
 				yourself ].
 ]
 
+{ #category : #initializing }
+ZtUser >> initialize [
+	groups := OrderedCollection new.
+]
+
 { #category : #accessing }
 ZtUser >> library [
 	^ ZtUserLibrary user: self
+]
+
+{ #category : #syncing }
+ZtUser >> syncGroupsWithServer [
+	| versions forDeletion |
+	versions := self groupVersionsFromServer.
+	forDeletion := OrderedCollection new.
+	groups do: [ :each |
+		versions at: (each groupId asString)
+			ifPresent: [ :v | each syncWithServerAtVersion: v ]
+			ifAbsent: [ forDeletion add: each ].
+		versions removeKey: each groupId asString ].
+	forDeletion do: [ :each | groups remove: each ].
+	versions associationsDo: [ :each |
+		groups add: (self groupFromServer: each key asInteger) ]
 ]
 
 { #category : #accessing }
