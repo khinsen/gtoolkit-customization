@@ -34,3 +34,8 @@ ZtEntity >> rawData: aDictionary [
 	timeStamp := DateAndTime now.
 	self initializeFromRawData
 ]
+
+{ #category : #accessing }
+ZtEntity >> version [
+	^ rawData at: #version
+]

@@ -44,4 +44,5 @@ ZtGroup >> printOn: aStream [
 { #category : #syncing }
 ZtGroup >> syncWithServerAtVersion: anInteger [
 	(rawData at: #version) = anInteger ifTrue: [ ^ self ].
+	self notYetImplemented
 ]
