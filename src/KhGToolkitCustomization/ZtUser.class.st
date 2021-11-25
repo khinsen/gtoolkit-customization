@@ -40,6 +40,14 @@ ZtUser >> apiToken: aString [
 ]
 
 { #category : #accessing }
+ZtUser >> cacheDirectory [
+	| directory |
+	directory := FileLocator home / '.cache' / 'Gt4Zotero' / self userId.
+	directory ensureCreateDirectory.
+	^ directory
+]
+
+{ #category : #accessing }
 ZtUser >> groupFromServer: anInteger [
 	| rawData |
 	rawData := ZtApiClient new

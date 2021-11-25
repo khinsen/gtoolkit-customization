@@ -19,20 +19,24 @@ ZtEntity >> gtJsonDataFor: aView [
 		yourself
 ]
 
-{ #category : #initializing }
-ZtEntity >> initializeFromRawData [
-]
-
 { #category : #accessing }
 ZtEntity >> key [
 	^ rawData at: #key
 ]
 
 { #category : #initializing }
+ZtEntity >> key: aString [
+	"Initialize an entity to be filled with data later."
+	self rawData:
+		(Dictionary
+			with: #key -> aString
+			with: #version -> 0)
+]
+
+{ #category : #initializing }
 ZtEntity >> rawData: aDictionary [
 	rawData := aDictionary.
-	timeStamp := DateAndTime now.
-	self initializeFromRawData
+	timeStamp := DateAndTime now
 ]
 
 { #category : #accessing }
