@@ -58,16 +58,16 @@ ZtLibrary >> initialize [
 
 { #category : #initializing }
 ZtLibrary >> initializeFromRawData: aDictionary [ 
-	collections := (aDictionary at: #collections) collect: [ :each |
+	collections := ((aDictionary at: #collections) collect: [ :each |
 			(each at: #key)
 				-> (ZtCollection new
 						"storage: self storage;"
-						rawData: each) ].
-	items := (aDictionary at: #items) collect: [ :each |
+						rawData: each) ]) asDictionary.
+	items := ((aDictionary at: #items) collect: [ :each |
 			(each at: #key)
 			-> (ZtItem new
 					storage: self storage;
-					rawData: each) ].
+					rawData: each) ]) asDictionary.
 ]
 
 { #category : #accessing }
@@ -111,9 +111,12 @@ ZtLibrary >> multiRequest: path [
 	| dataItems client itemCount |
 	dataItems := OrderedCollection new.
 	[
+		Transcript nextPutAll: 'multiRequest: '; nextPutAll: path; cr.
 		client := self clientForRequest: path start: dataItems size limit: 100.
 		dataItems addAll: client get.
 		itemCount := (client response headers at: 'Total-Results') asInteger.
+		Transcript nextPutAll: 'itemCount: '; nextPutAll: itemCount asString; cr.
+		Transcript nextPutAll: 'dataItems size: '; nextPutAll: (dataItems size) asString; cr.
 		versionFromLastRequest :=
 			(client response headers at: 'Last-Modified-Version')
 				asInteger.
@@ -140,23 +143,39 @@ ZtLibrary >> storage: aZtStorage [
 { #category : #syncing }
 ZtLibrary >> syncWithServer [
 	| currentVersions keysToUpdate updates |
-	currentVersions := self versionsFromServerForPath: '/collections'.
+	Transcript cr; nextPutAll: 'Collections'; cr.
+	currentVersions := self versionsFromServerForPath: '/collections?'.
+	Transcript nextPutAll: currentVersions asString; cr.
 	keysToUpdate := self update: collections from: currentVersions.
-	updates := self multiRequest: ('/collections?collectionKey=', ',' join: keysToUpdate).
-	updates do: [ :each |
-		| key entity |
-		key := each at: #key.
-		entity := (collections at: key ifAbsent: ZtCollection new ).
-		entity rawData: each ].
+	Transcript nextPutAll: 'Keys: '; nextPutAll: keysToUpdate asString; cr.
+	keysToUpdate ifNotEmpty: [
+		updates := self multiRequest: ('/collections?collectionKey=',( ',' join: keysToUpdate)).
+		updates do: [ :each |
+			| key entity |
+			key := each at: #key.
+			Transcript nextPutAll: 'Updating: '; nextPutAll: key asString; cr.
+			entity := (collections at: key ifAbsent: ZtCollection new ).
+			entity rawData: each ] ].
 
-	currentVersions := self versionsFromServerForPath: '/items&includeTrashed=1'.
+	Transcript cr; nextPutAll: 'Items'; cr.
+	currentVersions := self versionsFromServerForPath: '/items?includeTrashed=1&'.
+	Transcript nextPutAll: currentVersions asString; cr.
 	keysToUpdate := self update: items from: currentVersions.
-	updates := self multiRequest: ('/items?itemKey=', ',' join: keysToUpdate).
-	updates do: [ :each |
-		| key entity |
-		key := each at: #key.
-		entity := (items at: key ifAbsent: ZtItem new ).
-		entity rawData: each ].
+	Transcript nextPutAll: 'Keys: '; nextPutAll: keysToUpdate asString; cr.
+	keysToUpdate ifNotEmpty: [
+		| requestPath |
+		requestPath := '/items?itemKey=', (',' join: keysToUpdate).
+		updates := self multiRequest: requestPath.
+		updates do: [ :each |
+			| key entity |
+			key := each at: #key.
+			Transcript nextPutAll: 'Updating: '; nextPutAll: key asString; cr.
+			entity := (items at: key ifAbsent: ZtItem new ).
+			entity rawData: each ] ].
+
+	versionFromLastRequest > version ifTrue: [
+		"self saveRawData."
+		version := versionFromLastRequest ]
 ]
 
 { #category : #accessing }
@@ -196,6 +215,6 @@ ZtLibrary >> versionsFromServerForPath: aString [
 		beOneShot;
 		user: self user;
 		path: self urlPrefix,
-			aString, ('&since=', version asString), '&format=versions';
+			aString, ('since=', version asString), '&format=versions';
 		get
 ]
