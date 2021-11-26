@@ -11,7 +11,16 @@ Class {
 ZtGroupLibrary class >> group: aZtGroup [
 	^ self new
 		group: aZtGroup;
+		loadData;
 		yourself
+]
+
+{ #category : #accessing }
+ZtGroupLibrary >> cacheDirectory [
+	| directory |
+	directory := FileLocator home / '.cache' / 'Gt4Zotero' / self groupId asString.
+	directory ensureCreateDirectory.
+	^ directory
 ]
 
 { #category : #accessing }
@@ -22,6 +31,11 @@ ZtGroupLibrary >> group [
 { #category : #accessing }
 ZtGroupLibrary >> group: aZtGroup [
 	group := aZtGroup
+]
+
+{ #category : #accessing }
+ZtGroupLibrary >> groupId [
+	^ self group groupId
 ]
 
 { #category : #accessing }

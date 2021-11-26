@@ -13,9 +13,14 @@ Class {
 	#category : #'KhGToolkitCustomization-Zotero'
 }
 
+{ #category : #accessing }
+ZtLibrary >> cacheDirectory [
+	self subclassResponsibility
+]
+
 { #category : #persistence }
 ZtLibrary >> cacheFile [
-	^ self user cacheDirectory / ('library-', version asString, '.ston')
+	^ self cacheDirectory / ('library-', version asString, '.ston')
 ]
 
 { #category : #accessing }
@@ -46,7 +51,7 @@ ZtLibrary >> downloadFromServer [
 						with:#items -> itemRawData.
 	self initializeFromRawData: completeRawData.
 	version := versionFromLastRequest.
-	self saveRawData: completeRawData
+	self saveToCache.
 ]
 
 { #category : #accessing }
@@ -78,6 +83,13 @@ ZtLibrary >> items [
 				rawData: each ]
 ]
 
+{ #category : #initializing }
+ZtLibrary >> loadData [
+	self loadFromCache
+		ifTrue: [ self syncWithServer ]
+		ifFalse: [ self downloadFromServer]
+]
+
 { #category : #accessing }
 ZtLibrary >> loadFromCache [
 	| cache data |
@@ -92,7 +104,7 @@ ZtLibrary >> loadFromCache [
 { #category : #persistence }
 ZtLibrary >> mostRecentCacheFile [
 	| cacheFiles maxVersion maxVersionFile |
-	cacheFiles := self user cacheDirectory children select: [ :each |
+	cacheFiles := self cacheDirectory children select: [ :each |
 		(each basename beginsWith: 'library-')
 		and: [ each basename endsWith: '.ston' ] ].
 	maxVersion := 0.
@@ -125,9 +137,13 @@ ZtLibrary >> multiRequest: path [
 ]
 
 { #category : #persistence }
-ZtLibrary >> saveRawData: completeRawData [ 
+ZtLibrary >> saveToCache [ 
+	| data |
+	data := Dictionary
+			with: #collections -> (collections values collect: #rawData)
+			with: #items -> (items values collect: #rawData).
 	self cacheFile writeStreamDo: [ :s |
-		STON put: completeRawData onStream: s ]
+		STON put: data onStream: s ]
 ]
 
 { #category : #accessing }
@@ -174,8 +190,8 @@ ZtLibrary >> syncWithServer [
 			entity rawData: each ] ].
 
 	versionFromLastRequest > version ifTrue: [
-		"self saveRawData."
-		version := versionFromLastRequest ]
+		version := versionFromLastRequest.
+		self saveToCache ]
 ]
 
 { #category : #accessing }
@@ -211,10 +227,15 @@ ZtLibrary >> user [
 
 { #category : #syncing }
 ZtLibrary >> versionsFromServerForPath: aString [
-	^ ZtApiClient new
+	| client versions |
+	client :=  ZtApiClient new
 		beOneShot;
 		user: self user;
 		path: self urlPrefix,
-			aString, ('since=', version asString), '&format=versions';
-		get
+			aString, ('since=', version asString), '&format=versions'.
+	versions := client get.
+	versionFromLastRequest :=
+			(client response headers at: 'Last-Modified-Version')
+				asInteger.
+	^ versions
 ]

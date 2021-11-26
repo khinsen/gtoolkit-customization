@@ -16,7 +16,7 @@ ZtUser class >> fromStoredCredentials [
 	apiTokenFile := FileLocator preferences / 'pharo' / 'zotero-access-token.txt'.
 	apiTokenFile exists ifFalse: [ self error: 'API token file missing' ].
 	userIdAndToken := $: split: apiTokenFile contents trim.
-	userId := userIdAndToken first.
+	userId := userIdAndToken first asInteger.
 	apiToken := userIdAndToken second.
 	^ self userId: userId apiToken: apiToken
 ]
@@ -26,6 +26,7 @@ ZtUser class >> userId: userId apiToken: apiToken [
 	^ self new
 		userId: userId;
 		apiToken: apiToken;
+		syncGroupsWithServer;
 		yourself
 ]
 
@@ -37,14 +38,6 @@ ZtUser >> apiToken [
 { #category : #accessing }
 ZtUser >> apiToken: aString [
 	apiToken := aString
-]
-
-{ #category : #accessing }
-ZtUser >> cacheDirectory [
-	| directory |
-	directory := FileLocator home / '.cache' / 'Gt4Zotero' / self userId.
-	directory ensureCreateDirectory.
-	^ directory
 ]
 
 { #category : #accessing }
@@ -66,7 +59,7 @@ ZtUser >> groupVersionsFromServer [
 	^ (ZtApiClient new
 		beOneShot;
 		user: self;
-		path: 'users/', userId, '/groups/?format=versions';
+		path: 'users/', userId asString, '/groups/?format=versions';
 		get)
 ]
 
@@ -90,7 +83,7 @@ ZtUser >> groupsFromServer [
 
 { #category : #initializing }
 ZtUser >> initialize [
-	groups := OrderedCollection new.
+	groups := OrderedCollection new
 ]
 
 { #category : #accessing }

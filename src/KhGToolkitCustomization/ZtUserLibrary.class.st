@@ -11,7 +11,16 @@ Class {
 ZtUserLibrary class >> user: aZtUser [
 	^ self new
 		user: aZtUser;
+		loadData;
 		yourself
+]
+
+{ #category : #accessing }
+ZtUserLibrary >> cacheDirectory [
+	| directory |
+	directory := FileLocator home / '.cache' / 'Gt4Zotero' / self userId asString.
+	directory ensureCreateDirectory.
+	^ directory
 ]
 
 { #category : #accessing }
@@ -27,4 +36,9 @@ ZtUserLibrary >> user [
 { #category : #accessing }
 ZtUserLibrary >> user: aZtUser [
 	user := aZtUser
+]
+
+{ #category : #accessing }
+ZtUserLibrary >> userId [
+	^ self user userId
 ]

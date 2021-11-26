@@ -33,6 +33,11 @@ ZtEntity >> key: aString [
 			with: #version -> 0)
 ]
 
+{ #category : #accessing }
+ZtEntity >> rawData [
+	^ rawData
+]
+
 { #category : #initializing }
 ZtEntity >> rawData: aDictionary [
 	rawData := aDictionary.
