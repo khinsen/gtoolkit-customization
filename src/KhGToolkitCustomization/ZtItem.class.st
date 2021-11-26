@@ -52,6 +52,16 @@ ZtItem >> itemType [
 ]
 
 { #category : #accessing }
+ZtItem >> numberOfChildren [
+	^ (rawData at: #meta) at: #numChildren
+]
+
+{ #category : #accessing }
+ZtItem >> parentKey [
+	^ (rawData at: #data) at: #parentItem ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
 ZtItem >> printOn: aStream [
 	super printOn: aStream.
 	aStream
