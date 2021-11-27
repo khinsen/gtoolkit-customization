@@ -8,10 +8,28 @@ Class {
 		'versionFromLastRequest',
 		'topLevelItems',
 		'items',
-		'collections'
+		'collections',
+		'collectionTree',
+		'itemTree'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
+
+{ #category : #organizing }
+ZtLibrary >> buildItemTree [
+	| itemTreeIndex |
+	itemTreeIndex := Dictionary new.
+	items keysDo: [ :key |
+		itemTreeIndex at: key put: { key. OrderedCollection new } ].
+	itemTree := OrderedCollection new.
+	items keysAndValuesDo: [ :key :item |
+		| treeNode |
+		treeNode := itemTreeIndex at: key.
+		item parentKey
+			ifNil: [ itemTree add: treeNode ]
+			ifNotNil: [ :p | (itemTreeIndex at: p) second add: treeNode ] ].
+	itemTree do: [ :each | self replaceKeysIn: each ].
+]
 
 { #category : #accessing }
 ZtLibrary >> cacheDirectory [
@@ -54,6 +72,19 @@ ZtLibrary >> downloadFromServer [
 	self saveToCache.
 ]
 
+{ #category : #inspecting }
+ZtLibrary >> gtItemsFor: aView [
+	<gtView>
+	items ifEmpty: [ ^ aView empty ].
+	^ aView columnedTree
+		title: 'Items';
+		priority: 0;
+		items: [ itemTree ];
+		column: #Item text: [ :each | each first printString ];
+		children: #second;
+		yourself
+]
+
 { #category : #accessing }
 ZtLibrary >> initialize [
 	version := 0.
@@ -87,7 +118,8 @@ ZtLibrary >> items [
 ZtLibrary >> loadData [
 	self loadFromCache
 		ifTrue: [ self syncWithServer ]
-		ifFalse: [ self downloadFromServer]
+		ifFalse: [ self downloadFromServer].
+	self buildItemTree
 ]
 
 { #category : #accessing }
@@ -134,6 +166,17 @@ ZtLibrary >> multiRequest: path [
 				asInteger.
 	dataItems size < itemCount ] whileTrue.
 	^ dataItems
+]
+
+{ #category : #organizing }
+ZtLibrary >> replaceKeysIn: aTreeNode [
+	| item |
+	item := items at: aTreeNode first.
+	aTreeNode at: 1 put: item.
+	self
+		assert: item numberOfChildren
+		equals: aTreeNode second size.
+	aTreeNode second do: [ :each | self replaceKeysIn: each ]
 ]
 
 { #category : #persistence }

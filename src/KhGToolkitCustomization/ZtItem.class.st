@@ -53,7 +53,7 @@ ZtItem >> itemType [
 
 { #category : #accessing }
 ZtItem >> numberOfChildren [
-	^ (rawData at: #meta) at: #numChildren
+	^ (rawData at: #meta) at: #numChildren ifAbsent: [ 0 ]
 ]
 
 { #category : #accessing }
