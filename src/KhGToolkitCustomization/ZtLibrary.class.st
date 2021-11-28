@@ -16,6 +16,24 @@ Class {
 }
 
 { #category : #organizing }
+ZtLibrary >> buildCollectionTree [
+	| treeIndex tree entities |
+	entities := collections.
+	treeIndex := Dictionary new.
+	entities keysDo: [ :key |
+		treeIndex at: key put: { key. OrderedCollection new } ].
+	tree := OrderedCollection new.
+	entities keysAndValuesDo: [ :key :entity |
+		| treeNode |
+		treeNode := treeIndex at: key.
+		entity parentKey
+			ifNil: [ tree add: treeNode ]
+			ifNotNil: [ :p | (treeIndex at: p) second add: treeNode ] ].
+	tree do: [ :each | self replaceKeysIn: each from: entities ].
+	collectionTree := tree.
+]
+
+{ #category : #organizing }
 ZtLibrary >> buildItemTree [
 	| itemTreeIndex |
 	itemTreeIndex := Dictionary new.
@@ -28,7 +46,7 @@ ZtLibrary >> buildItemTree [
 		item parentKey
 			ifNil: [ itemTree add: treeNode ]
 			ifNotNil: [ :p | (itemTreeIndex at: p) second add: treeNode ] ].
-	itemTree do: [ :each | self replaceKeysIn: each ].
+	itemTree do: [ :each | self replaceKeysIn: each from: items ].
 ]
 
 { #category : #accessing }
@@ -72,16 +90,31 @@ ZtLibrary >> downloadFromServer [
 	self saveToCache.
 ]
 
+{ #category : #initializing }
+ZtLibrary >> gtCollectionsFor: aView [
+	<gtView>
+	items ifEmpty: [ ^ aView empty ].
+	^ aView columnedTree
+		title: 'Collections';
+		priority: 0;
+		items: [ collectionTree ];
+		column: #Item text: [ :each | each first printString ];
+		children: #second;
+		send: #first;
+		yourself
+]
+
 { #category : #inspecting }
 ZtLibrary >> gtItemsFor: aView [
 	<gtView>
 	items ifEmpty: [ ^ aView empty ].
 	^ aView columnedTree
 		title: 'Items';
-		priority: 0;
+		priority: 1;
 		items: [ itemTree ];
 		column: #Item text: [ :each | each first printString ];
 		children: #second;
+		send: #first;
 		yourself
 ]
 
@@ -119,7 +152,8 @@ ZtLibrary >> loadData [
 	self loadFromCache
 		ifTrue: [ self syncWithServer ]
 		ifFalse: [ self downloadFromServer].
-	self buildItemTree
+	self buildItemTree.
+	self buildCollectionTree.
 ]
 
 { #category : #accessing }
@@ -169,14 +203,14 @@ ZtLibrary >> multiRequest: path [
 ]
 
 { #category : #organizing }
-ZtLibrary >> replaceKeysIn: aTreeNode [
-	| item |
-	item := items at: aTreeNode first.
-	aTreeNode at: 1 put: item.
+ZtLibrary >> replaceKeysIn: aTreeNode from: entities [
+	| entity |
+	entity := entities at: aTreeNode first.
+	aTreeNode at: 1 put: entity.
 	self
-		assert: item numberOfChildren
+		assert: entity numberOfChildren
 		equals: aTreeNode second size.
-	aTreeNode second do: [ :each | self replaceKeysIn: each ]
+	aTreeNode second do: [ :each | self replaceKeysIn: each from: entities ]
 ]
 
 { #category : #persistence }

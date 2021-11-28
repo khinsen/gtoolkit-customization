@@ -10,6 +10,11 @@ ZtCollection >> name [
 ]
 
 { #category : #accessing }
+ZtCollection >> numberOfChildren [
+	^ self numberOfCollections
+]
+
+{ #category : #accessing }
 ZtCollection >> numberOfCollections [
 	^ (rawData at: #meta) at: #numCollections
 ]
@@ -21,7 +26,9 @@ ZtCollection >> numberOfItems [
 
 { #category : #accessing }
 ZtCollection >> parentKey [
-	^ (rawData at: #data) at: #parentCollection ifAbsent: [ nil ]
+	^ (rawData at: #data) at: #parentCollection
+		ifPresent: [ :p | p = false ifTrue: [ nil ] ifFalse: [ p ] ]
+		ifAbsent: [ nil ]
 ]
 
 { #category : #printing }
