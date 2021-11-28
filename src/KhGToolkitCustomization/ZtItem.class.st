@@ -2,16 +2,21 @@ Class {
 	#name : #ZtItem,
 	#superclass : #ZtEntity,
 	#instVars : [
-		'storage'
+		'library'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
 
 { #category : #accessing }
+ZtItem >> collectionKeys [
+	^ (rawData at: #data) at: #collections
+]
+
+{ #category : #accessing }
 ZtItem >> fileDirectory [
 	| directory |
-	self storage ifNil: [ ^ nil ].
-	directory := self storage directoryForKey: self key.
+	self library storage ifNil: [ ^ nil ].
+	directory := self library storage directoryForKey: self key.
 	directory exists ifFalse: [ ^ nil ].
 	^ directory
 ]
@@ -52,6 +57,16 @@ ZtItem >> itemType [
 ]
 
 { #category : #accessing }
+ZtItem >> library [
+	^ library
+]
+
+{ #category : #accessing }
+ZtItem >> library: aZtLibrary [
+	library := aZtLibrary
+]
+
+{ #category : #accessing }
 ZtItem >> numberOfChildren [
 	^ (rawData at: #meta) at: #numChildren ifAbsent: [ 0 ]
 ]
@@ -70,16 +85,6 @@ ZtItem >> printOn: aStream [
 		<< ', ';
 		<< self itemType;
 		<< $)
-]
-
-{ #category : #accessing }
-ZtItem >> storage [
-	^ storage
-]
-
-{ #category : #accessing }
-ZtItem >> storage: aZtStorage [
-	storage := aZtStorage
 ]
 
 { #category : #accessing }

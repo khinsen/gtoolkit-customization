@@ -15,10 +15,9 @@ Class {
 	#category : #'KhGToolkitCustomization-Zotero'
 }
 
-{ #category : #organizing }
-ZtLibrary >> buildCollectionTree [
-	| treeIndex tree entities |
-	entities := collections.
+{ #category : #accessing }
+ZtLibrary >> buildTreeFor: entities [
+	| treeIndex tree |
 	treeIndex := Dictionary new.
 	entities keysDo: [ :key |
 		treeIndex at: key put: { key. OrderedCollection new } ].
@@ -30,23 +29,7 @@ ZtLibrary >> buildCollectionTree [
 			ifNil: [ tree add: treeNode ]
 			ifNotNil: [ :p | (treeIndex at: p) second add: treeNode ] ].
 	tree do: [ :each | self replaceKeysIn: each from: entities ].
-	collectionTree := tree.
-]
-
-{ #category : #organizing }
-ZtLibrary >> buildItemTree [
-	| itemTreeIndex |
-	itemTreeIndex := Dictionary new.
-	items keysDo: [ :key |
-		itemTreeIndex at: key put: { key. OrderedCollection new } ].
-	itemTree := OrderedCollection new.
-	items keysAndValuesDo: [ :key :item |
-		| treeNode |
-		treeNode := itemTreeIndex at: key.
-		item parentKey
-			ifNil: [ itemTree add: treeNode ]
-			ifNotNil: [ :p | (itemTreeIndex at: p) second add: treeNode ] ].
-	itemTree do: [ :each | self replaceKeysIn: each from: items ].
+	^ tree.
 ]
 
 { #category : #accessing }
@@ -73,7 +56,7 @@ ZtLibrary >> clientForRequest: path start: firstIndex limit: anInteger [
 ZtLibrary >> collections [
 	^ (self multiRequest: '/collections') collect: [ :each |
 			ZtCollection new
-				"storage: self storage;"
+				library: self;
 				rawData: each ]
 ]
 
@@ -98,7 +81,11 @@ ZtLibrary >> gtCollectionsFor: aView [
 		title: 'Collections';
 		priority: 0;
 		items: [ collectionTree ];
-		column: #Item text: [ :each | each first printString ];
+		column: #Collection text: [ :each | each first name ];
+		column: 'Items' text: [ :each |
+			| n |
+			n := each first numberOfItems.
+			n = 0 ifTrue: [ '' ] ifFalse: [ n printString ] ];
 		children: #second;
 		send: #first;
 		yourself
@@ -130,21 +117,13 @@ ZtLibrary >> initializeFromRawData: aDictionary [
 	collections := ((aDictionary at: #collections) collect: [ :each |
 			(each at: #key)
 				-> (ZtCollection new
-						"storage: self storage;"
+						library: self;
 						rawData: each) ]) asDictionary.
 	items := ((aDictionary at: #items) collect: [ :each |
 			(each at: #key)
 			-> (ZtItem new
-					storage: self storage;
+					library: self;
 					rawData: each) ]) asDictionary.
-]
-
-{ #category : #accessing }
-ZtLibrary >> items [
-	^ (self multiRequest: '/items') collect: [ :each |
-			ZtItem new
-				storage: self storage;
-				rawData: each ]
 ]
 
 { #category : #initializing }
@@ -152,8 +131,8 @@ ZtLibrary >> loadData [
 	self loadFromCache
 		ifTrue: [ self syncWithServer ]
 		ifFalse: [ self downloadFromServer].
-	self buildItemTree.
-	self buildCollectionTree.
+	itemTree := self buildTreeFor: items.
+	collectionTree := self buildTreeFor: collections
 ]
 
 { #category : #accessing }
@@ -247,7 +226,8 @@ ZtLibrary >> syncWithServer [
 			| key entity |
 			key := each at: #key.
 			Transcript nextPutAll: 'Updating: '; nextPutAll: key asString; cr.
-			entity := (collections at: key ifAbsent: ZtCollection new ).
+			entity := collections at: key
+						ifAbsent: (ZtCollection new library: self).
 			entity rawData: each ] ].
 
 	Transcript cr; nextPutAll: 'Items'; cr.
@@ -263,7 +243,8 @@ ZtLibrary >> syncWithServer [
 			| key entity |
 			key := each at: #key.
 			Transcript nextPutAll: 'Updating: '; nextPutAll: key asString; cr.
-			entity := (items at: key ifAbsent: ZtItem new ).
+			entity := items at: key
+						ifAbsent: (ZtItem new library: self) .
 			entity rawData: each ] ].
 
 	versionFromLastRequest > version ifTrue: [
@@ -271,12 +252,10 @@ ZtLibrary >> syncWithServer [
 		self saveToCache ]
 ]
 
-{ #category : #accessing }
-ZtLibrary >> topLevelItems [
-	^ (self multiRequest: '/items/top') collect: [ :each |
-			ZtItem new
-				storage: self storage;
-				rawData: each ]
+{ #category : #organizing }
+ZtLibrary >> topLevelItemsInCollection: aCollectionKey [
+	^ itemTree select: [ :each |
+		 each first collectionKeys includes: aCollectionKey ]
 ]
 
 { #category : #syncing }
