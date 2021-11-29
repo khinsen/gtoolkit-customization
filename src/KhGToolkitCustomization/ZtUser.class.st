@@ -5,29 +5,21 @@ Class {
 		'userId',
 		'apiToken',
 		'storage',
-		'groups'
+		'groups',
+		'username'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
 
 { #category : #'instance creation' }
-ZtUser class >> fromStoredCredentials [
-	| apiTokenFile userIdAndToken userId apiToken |
-	apiTokenFile := FileLocator preferences / 'pharo' / 'zotero-access-token.txt'.
-	apiTokenFile exists ifFalse: [ self error: 'API token file missing' ].
-	userIdAndToken := $: split: apiTokenFile contents trim.
-	userId := userIdAndToken first asInteger.
-	apiToken := userIdAndToken second.
-	^ self userId: userId apiToken: apiToken
-]
-
-{ #category : #'instance creation' }
-ZtUser class >> userId: userId apiToken: apiToken [
-	^ self new
-		userId: userId;
-		apiToken: apiToken;
-		syncGroupsWithServer;
-		yourself
+ZtUser class >> username: aString [
+	| user |
+	user :=  ZtUser new
+		username: aString;
+		loadCredentials.
+	user hasCredentials
+		ifTrue: [ user syncGroupsWithServer].
+	^ user
 ]
 
 { #category : #accessing }
@@ -38,6 +30,18 @@ ZtUser >> apiToken [
 { #category : #accessing }
 ZtUser >> apiToken: aString [
 	apiToken := aString
+]
+
+{ #category : #authentication }
+ZtUser >> credentialFile [
+	| directory file |
+	directory := FileLocator preferences / 'Gt4Zotero'.
+	directory ensureCreateDirectory.
+	file := directory / 'credentials.v1.ston'.
+	file exists ifFalse: [
+		file writeStreamDo: [ :s |
+			STON put: (Dictionary new) onStream:  s] ].
+	^ file
 ]
 
 { #category : #accessing }
@@ -81,6 +85,41 @@ ZtUser >> groupsFromServer [
 				yourself ].
 ]
 
+{ #category : #inspecting }
+ZtUser >> gtGroupsFor: aView [
+	<gtView>
+	groups ifEmpty: [ ^ aView empty ].
+	^ aView list
+		title: 'Groups';
+		priority: 2;
+		items: [ groups ];
+		itemText: #name;
+		yourself
+]
+
+{ #category : #inspecting }
+ZtUser >> gtLibrariesFor: aView [
+	<gtView>
+	| libraries |
+	libraries := OrderedCollection
+		with: { 'User ', username. self }.
+	libraries addAll:
+		(groups collect: [ :each |
+			{ 'Group ', each name. each } ]).
+	^ aView list
+		title: 'Libraries';
+		priority: 1;
+		items: [ libraries ];
+		itemText: #first;
+		send: [ :each | each second library ];
+		yourself
+]
+
+{ #category : #testing }
+ZtUser >> hasCredentials [
+	^ userId isNotNil and: [ apiToken isNotNil ]
+]
+
 { #category : #initializing }
 ZtUser >> initialize [
 	groups := OrderedCollection new
@@ -89,6 +128,31 @@ ZtUser >> initialize [
 { #category : #accessing }
 ZtUser >> library [
 	^ ZtUserLibrary user: self
+]
+
+{ #category : #authentication }
+ZtUser >> loadCredentials [
+	| credentials |
+	credentials := self credentialFile readStreamDo: [ :s |
+		STON fromStream: s ].
+	credentials at: username
+		ifPresent: [ :c |
+			userId := c at: #userId.
+			apiToken := c at: #apiToken ]
+]
+
+{ #category : #accessing }
+ZtUser >> storeCredentials [
+	| credentials |
+	credentials := self credentialFile readStreamDo: [ :s |
+		STON fromStream: s ].
+	credentials
+		at: username
+		put: (Dictionary
+				with: #userId -> userId
+				with: #apiToken -> apiToken).
+	self credentialFile writeStreamDo: [ :s |
+		STON put: credentials onStream: s ]
 ]
 
 { #category : #syncing }
@@ -114,4 +178,14 @@ ZtUser >> userId [
 { #category : #accessing }
 ZtUser >> userId: aString [
 	userId := aString
+]
+
+{ #category : #accessing }
+ZtUser >> username [
+	^ username
+]
+
+{ #category : #accessing }
+ZtUser >> username: aString [
+	username := aString
 ]
