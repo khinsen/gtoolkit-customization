@@ -60,7 +60,7 @@ ZtLibrary >> clientForRequest: path start: firstIndex limit: anInteger [
 
 { #category : #accessing }
 ZtLibrary >> collectionWithKey: aCollectionKey [
-	^ self collections detect: [ :each | each key = aCollectionKey ]
+	^ self collections at: aCollectionKey
 ]
 
 { #category : #accessing }
@@ -108,7 +108,7 @@ ZtLibrary >> gtItemsFor: aView [
 	^ aView forward
 		  title: 'Items';
 		  priority: 1;
-		  object: [ ZtItemGroup new itemTree: itemTree ];
+		  object: [ ZtItemGroup new itemTree: self itemTree ];
 		  view: #gtItemsFor:;
 		  yourself
 ]
@@ -132,6 +132,11 @@ ZtLibrary >> initializeFromRawData: aDictionary [
 			-> (ZtItem new
 					library: self;
 					rawData: each) ]) asDictionary.
+]
+
+{ #category : #accessing }
+ZtLibrary >> itemTree [
+	^ itemTree
 ]
 
 { #category : #initializing }

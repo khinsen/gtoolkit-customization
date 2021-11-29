@@ -19,6 +19,24 @@ ZtItem >> collectionKeys [
 ]
 
 { #category : #accessing }
+ZtItem >> creators [
+	^ (rawData at: #data) at: #creators
+		ifPresent: [ :creators | creators collect: [ :each |
+						ZtCreator new rawData: each ] ]
+		ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+ZtItem >> date [
+	^ (rawData at: #data) at: #date ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+ZtItem >> doi [
+	^ (rawData at: #data) at: #DOI ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
 ZtItem >> fileDirectory [
 	| directory |
 	self library storage ifNil: [ ^ nil ].
@@ -74,6 +92,20 @@ ZtItem >> gtCollectionsFor: aView [
 ]
 
 { #category : #inspecting }
+ZtItem >> gtCreatorsFor: aView [
+	<gtView>
+	| creators |
+	creators := self creators.
+	creators ifNil: [ ^ aView empty ].
+	creators ifEmpty: [ ^ aView empty ].
+	^ aView list
+		title: 'Creators';
+		priority: 6;
+		items: [ creators ];
+		yourself
+]
+
+{ #category : #inspecting }
 ZtItem >> gtFilesFor: aView [
 	<gtView>
 	^ self fileDirectory
@@ -85,6 +117,19 @@ ZtItem >> gtFilesFor: aView [
 				object: [ directory ];
 				view: #gtTreeFor:;
 				yourself ]
+]
+
+{ #category : #inspecting }
+ZtItem >> gtSummaryFor: aView [
+	<gtView>
+	^ aView explicit
+		title: 'Summary';
+		priority: 0;
+		disableAsync;
+		stencil: [
+			(LeTextSnippet new string: self markdownSummary)
+				asPreviewElement ];
+			yourself
 ]
 
 { #category : #accessing }
@@ -100,6 +145,40 @@ ZtItem >> library [
 { #category : #accessing }
 ZtItem >> library: aZtLibrary [
 	library := aZtLibrary
+]
+
+{ #category : #inspecting }
+ZtItem >> markdownSummary [
+	^ String streamContents: [ :stream |
+		stream
+			<< '**Title:**'; cr; << self title;  cr.
+		stream cr.
+		(self creators groupedBy: #creatorType) keysAndValuesDo: [ :type :creators |
+			stream << '**'; << type capitalized; << '(s):**'; cr.
+			creators do: [ :each | stream << each name; cr ] ].
+		stream cr.
+		self date ifNotNil: [ :date |
+			stream << '**Date:** ' << date; cr ].
+		stream cr.
+		self doi ifNotNil: [ :doi |
+			stream
+				<< '**DOI:** [';
+				<< doi;
+				<< '](http://dx.doi.org/';
+				<< doi;
+				<< ')';
+				cr ].
+		self url ifNotNil: [ :url |
+			stream
+				<< '**URL:** [';
+				<< url;
+				<< '](';
+				<< url;
+				<< ')';
+				cr ].
+		stream cr.
+		stream << '**Item type:** ' << self itemType; cr.
+		]
 ]
 
 { #category : #accessing }
@@ -139,4 +218,11 @@ ZtItem >> uniqueFileOrDirectory [
 			files size = 1
 				ifTrue: [ files first ]
 				ifFalse: [ directory ] ]
+]
+
+{ #category : #accessing }
+ZtItem >> url [
+	^ (rawData at: #data) at: #url
+		ifPresent: [ :url | url ifEmpty: [ nil ] ifNotEmpty: [ url ] ]
+		ifAbsent: [ nil ]
 ]
