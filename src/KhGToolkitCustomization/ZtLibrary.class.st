@@ -43,6 +43,12 @@ ZtLibrary >> cacheFile [
 ]
 
 { #category : #accessing }
+ZtLibrary >> childrenOfItem: anItemKey [
+	^ (itemTree detect: [ :each | each first key = anItemKey ])
+		second
+]
+
+{ #category : #accessing }
 ZtLibrary >> clientForRequest: path start: firstIndex limit: anInteger [
 	^ ZtApiClient new
 		beOneShot;
@@ -50,6 +56,11 @@ ZtLibrary >> clientForRequest: path start: firstIndex limit: anInteger [
 		path: self urlPrefix, path;
 		queryAt: #start put: firstIndex asString;
 		queryAt: #limit put: anInteger asString.
+]
+
+{ #category : #accessing }
+ZtLibrary >> collectionWithKey: aCollectionKey [
+	^ self collections detect: [ :each | each key = aCollectionKey ]
 ]
 
 { #category : #accessing }
@@ -94,15 +105,12 @@ ZtLibrary >> gtCollectionsFor: aView [
 { #category : #inspecting }
 ZtLibrary >> gtItemsFor: aView [
 	<gtView>
-	items ifEmpty: [ ^ aView empty ].
-	^ aView columnedTree
-		title: 'Items';
-		priority: 1;
-		items: [ itemTree ];
-		column: #Item text: [ :each | each first printString ];
-		children: #second;
-		send: #first;
-		yourself
+	^ aView forward
+		  title: 'Items';
+		  priority: 1;
+		  object: [ ZtItemGroup new itemTree: itemTree ];
+		  view: #gtItemsFor:;
+		  yourself
 ]
 
 { #category : #accessing }

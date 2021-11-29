@@ -9,15 +9,12 @@ Class {
 
 { #category : #inspecting }
 ZtCollection >> gtItemsFor: aView [
-
 	<gtView>
-	^ aView columnedTree
+	^ aView forward
 		  title: 'Items';
 		  priority: 1;
-		  items: [ self itemTree ];
-		  column: #Item text: [ :each | each first printString ];
-		  children: #second;
-		  send: #first;
+		  object: [ ZtItemGroup new itemTree: self itemTree ];
+		  view: #gtItemsFor:;
 		  yourself
 ]
 

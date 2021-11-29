@@ -8,8 +8,14 @@ Class {
 }
 
 { #category : #accessing }
+ZtItem >> children [
+	^ (self library childrenOfItem: self key)
+		collect: #first
+]
+
+{ #category : #accessing }
 ZtItem >> collectionKeys [
-	^ (rawData at: #data) at: #collections
+	^ (rawData at: #data) at: #collections ifAbsent: [ Array new ]
 ]
 
 { #category : #accessing }
@@ -26,7 +32,9 @@ ZtItem >> gtActionWebBrowseFor: anAction [
 	<gtAction>
 	|  button |
 	^ self uniqueFileOrDirectory
-		ifNil: [ anAction noAction ]
+		ifNil: [ self numberOfChildren = 0
+					ifTrue: [ anAction noAction ]
+					ifFalse: [ self children first gtActionWebBrowseFor: anAction ] ]
 		ifNotNil: [ :fileReference |
 			anAction explicit stencil: [
 			button := BrButton new.
@@ -35,6 +43,34 @@ ZtItem >> gtActionWebBrowseFor: anAction [
 				action:  [ WebBrowser openOn: fileReference fullName ];
 				icon: BrGlamorousIcons go asElement;
 				label: 'Open in OS' translated ] ]
+]
+
+{ #category : #inspecting }
+ZtItem >> gtAttachmentsFor: aView [
+	<gtView>
+	self numberOfChildren = 0 ifTrue: [ ^ aView empty ].
+	^ aView forward
+		title: 'Attachments';
+		priority: 5;
+		object: [ ZtItemGroup new itemTree:
+					(self library childrenOfItem: self key) ];
+		view: #gtItemsFor:;
+		yourself
+]
+
+{ #category : #inspecting }
+ZtItem >> gtCollectionsFor: aView [
+	<gtView>
+	| collectionKeys |
+	collectionKeys := self collectionKeys.
+	collectionKeys ifEmpty: [ ^ aView empty ].
+	^ aView list
+		title: 'Collections';
+		priority: 7;
+		items: [ collectionKeys collect: [ :each |
+				 	self library collectionWithKey:  each ] ];
+		itemText: #name;
+		yourself
 ]
 
 { #category : #inspecting }
@@ -85,6 +121,11 @@ ZtItem >> printOn: aStream [
 		<< ', ';
 		<< self itemType;
 		<< $)
+]
+
+{ #category : #accessing }
+ZtItem >> title [
+	^ (rawData at: #data) at: #title
 ]
 
 { #category : #accessing }
