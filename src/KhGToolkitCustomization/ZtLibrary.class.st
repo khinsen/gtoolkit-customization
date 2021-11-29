@@ -17,17 +17,20 @@ Class {
 
 { #category : #accessing }
 ZtLibrary >> buildTreeFor: entities [
-	| treeIndex tree |
+	| treeIndex tree orphanTreeNode |
 	treeIndex := Dictionary new.
 	entities keysDo: [ :key |
 		treeIndex at: key put: { key. OrderedCollection new } ].
+	orphanTreeNode := { nil. OrderedCollection new }.
 	tree := OrderedCollection new.
 	entities keysAndValuesDo: [ :key :entity |
 		| treeNode |
 		treeNode := treeIndex at: key.
 		entity parentKey
 			ifNil: [ tree add: treeNode ]
-			ifNotNil: [ :p | (treeIndex at: p) second add: treeNode ] ].
+			ifNotNil: [ :p |
+				(treeIndex at: p ifAbsent: [ orphanTreeNode ])
+					second add: treeNode ] ].
 	tree do: [ :each | self replaceKeysIn: each from: entities ].
 	^ tree.
 ]
@@ -199,9 +202,11 @@ ZtLibrary >> replaceKeysIn: aTreeNode from: entities [
 	| entity |
 	entity := entities at: aTreeNode first.
 	aTreeNode at: 1 put: entity.
-	self
+	"It seems that in group libraries, the number of children can be greater than
+	 the number of child items actually present, so the test below fails."
+	"self
 		assert: entity numberOfChildren
-		equals: aTreeNode second size.
+		equals: aTreeNode second size."
 	aTreeNode second do: [ :each | self replaceKeysIn: each from: entities ]
 ]
 

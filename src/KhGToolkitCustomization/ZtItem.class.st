@@ -33,7 +33,9 @@ ZtItem >> date [
 
 { #category : #accessing }
 ZtItem >> doi [
-	^ (rawData at: #data) at: #DOI ifAbsent: [ nil ]
+	^ (rawData at: #data) at: #DOI
+		ifPresent: [ :doi | doi ifEmpty: [ nil ] ifNotEmpty: [ doi ] ]
+		ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
@@ -153,12 +155,13 @@ ZtItem >> markdownSummary [
 		stream
 			<< '**Title:**'; cr; << self title;  cr.
 		stream cr.
-		(self creators groupedBy: #creatorType) keysAndValuesDo: [ :type :creators |
-			stream << '**'; << type capitalized; << '(s):**'; cr.
-			creators do: [ :each | stream << each name; cr ] ].
-		stream cr.
-		self date ifNotNil: [ :date |
-			stream << '**Date:** ' << date; cr ].
+		self creators isEmptyOrNil ifFalse: [
+			(self creators groupedBy: #creatorType) keysAndValuesDo: [ :type :creators |
+				stream << '**'; << type capitalized; << '(s):**'; cr.
+				creators do: [ :each | stream << each name; cr ] ].
+			stream cr ].
+		self date isEmptyOrNil ifFalse: [
+			stream << '**Date:** ' << self date; cr ].
 		stream cr.
 		self doi ifNotNil: [ :doi |
 			stream
