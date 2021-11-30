@@ -10,7 +10,8 @@ Class {
 		'items',
 		'collections',
 		'collectionTree',
-		'itemTree'
+		'itemTree',
+		'orphanedItemTree'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
@@ -31,8 +32,11 @@ ZtLibrary >> buildTreeFor: entities [
 			ifNotNil: [ :p |
 				(treeIndex at: p ifAbsent: [ orphanTreeNode ])
 					second add: treeNode ] ].
-	tree do: [ :each | self replaceKeysIn: each from: entities ].
-	^ tree.
+	tree do: [ :each |
+		self replaceKeysIn: each from: entities ].
+	orphanTreeNode second do: [ :each |
+		self replaceKeysIn: each from: entities ].
+	^ { tree. orphanTreeNode second }
 ]
 
 { #category : #accessing }
@@ -116,6 +120,18 @@ ZtLibrary >> gtItemsFor: aView [
 		  yourself
 ]
 
+{ #category : #inspecting }
+ZtLibrary >> gtOrphanedItemsFor: aView [
+	<gtView>
+	orphanedItemTree ifEmpty: [ ^ aView empty ].
+	^ aView forward
+		  title: 'Orphaned Items';
+		  priority: 2;
+		  object: [ ZtItemGroup new itemTree: orphanedItemTree ];
+		  view: #gtItemsFor:;
+		  yourself
+]
+
 { #category : #accessing }
 ZtLibrary >> initialize [
 	version := 0.
@@ -144,11 +160,16 @@ ZtLibrary >> itemTree [
 
 { #category : #initializing }
 ZtLibrary >> loadData [
+	| treeData |
 	self loadFromCache
 		ifTrue: [ self syncWithServer ]
 		ifFalse: [ self downloadFromServer].
-	itemTree := self buildTreeFor: items.
-	collectionTree := self buildTreeFor: collections
+	treeData := self buildTreeFor: items.
+	itemTree := treeData first.
+	orphanedItemTree := treeData second.
+	treeData := self buildTreeFor: collections.
+	collectionTree := treeData first.
+	self assert: treeData second size equals: 0
 ]
 
 { #category : #accessing }
@@ -157,6 +178,7 @@ ZtLibrary >> loadFromCache [
 	cache := self mostRecentCacheFile.
 	cache second ifNil: [ ^ false ].
 	data := cache second readStreamDo: [ :s | STON fromStream: s ].
+	self assert: (data at: #version) equals: 1.
 	self initializeFromRawData: data.
 	version := cache first.
 	^ true
@@ -204,9 +226,9 @@ ZtLibrary >> replaceKeysIn: aTreeNode from: entities [
 	aTreeNode at: 1 put: entity.
 	"It seems that in group libraries, the number of children can be greater than
 	 the number of child items actually present, so the test below fails."
-	"self
+	self
 		assert: entity numberOfChildren
-		equals: aTreeNode second size."
+		equals: aTreeNode second size.
 	aTreeNode second do: [ :each | self replaceKeysIn: each from: entities ]
 ]
 
@@ -214,6 +236,7 @@ ZtLibrary >> replaceKeysIn: aTreeNode from: entities [
 ZtLibrary >> saveToCache [ 
 	| data |
 	data := Dictionary
+			with: #version->1
 			with: #collections -> (collections values collect: #rawData)
 			with: #items -> (items values collect: #rawData).
 	self cacheFile writeStreamDo: [ :s |
@@ -249,7 +272,7 @@ ZtLibrary >> syncWithServer [
 			entity rawData: each ] ].
 
 	Transcript cr; nextPutAll: 'Items'; cr.
-	currentVersions := self versionsFromServerForPath: '/items?includeTrashed=1&'.
+	currentVersions := self versionsFromServerForPath: '/items?'.
 	Transcript nextPutAll: currentVersions asString; cr.
 	keysToUpdate := self update: items from: currentVersions.
 	Transcript nextPutAll: 'Keys: '; nextPutAll: keysToUpdate asString; cr.

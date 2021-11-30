@@ -6,7 +6,8 @@ Class {
 		'apiToken',
 		'storage',
 		'groups',
-		'username'
+		'username',
+		'library'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
@@ -35,7 +36,7 @@ ZtUser >> apiToken: aString [
 { #category : #authentication }
 ZtUser >> credentialFile [
 	| directory file |
-	directory := FileLocator preferences / 'Gt4Zotero'.
+	directory := FileLocator preferences / 'GT-Zotero'.
 	directory ensureCreateDirectory.
 	file := directory / 'credentials.v1.ston'.
 	file exists ifFalse: [
@@ -127,7 +128,7 @@ ZtUser >> initialize [
 
 { #category : #accessing }
 ZtUser >> library [
-	^ ZtUserLibrary user: self
+	^ library ifNil: [ library := ZtUserLibrary user: self ]
 ]
 
 { #category : #authentication }

@@ -152,8 +152,9 @@ ZtItem >> library: aZtLibrary [
 { #category : #inspecting }
 ZtItem >> markdownSummary [
 	^ String streamContents: [ :stream |
-		stream
-			<< '**Title:**'; cr; << self title;  cr.
+		self title isEmptyOrNil ifFalse: [
+			stream
+				<< '**Title:**'; cr; << self title;  cr ].
 		stream cr.
 		self creators isEmptyOrNil ifFalse: [
 			(self creators groupedBy: #creatorType) keysAndValuesDo: [ :type :creators |
@@ -206,8 +207,13 @@ ZtItem >> printOn: aStream [
 ]
 
 { #category : #accessing }
+ZtItem >> summary [
+	^ self title ifNil: [ self itemType ]
+]
+
+{ #category : #accessing }
 ZtItem >> title [
-	^ (rawData at: #data) at: #title
+	^ (rawData at: #data) at: #title ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }

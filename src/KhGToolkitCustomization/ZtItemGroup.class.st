@@ -14,7 +14,7 @@ ZtItemGroup >> gtItemsFor: aView [
 		  title: 'Items';
 		  priority: 1;
 		  items: [ self itemTree ];
-		  column: #Item text: [ :each | each first title ];
+		  column: #Item text: [ :each | each first summary ];
 		  children: #second;
 		  send: #first;
 		  yourself

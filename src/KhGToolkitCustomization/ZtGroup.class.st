@@ -2,7 +2,8 @@ Class {
 	#name : #ZtGroup,
 	#superclass : #ZtEntity,
 	#instVars : [
-		'accessingMember'
+		'accessingMember',
+		'library'
 	],
 	#category : #'KhGToolkitCustomization-Zotero'
 }
@@ -24,7 +25,7 @@ ZtGroup >> groupId [
 
 { #category : #accessing }
 ZtGroup >> library [
-	^ ZtGroupLibrary group: self
+	^ library ifNil: [ library := ZtGroupLibrary group: self ]
 ]
 
 { #category : #accessing }
