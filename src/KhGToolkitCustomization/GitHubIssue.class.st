@@ -9,7 +9,7 @@ Class {
 
 { #category : #accessing }
 GitHubIssue >> comments [
-	^ (self rawDataFromUrl: (rawData at: 'comments_url'))
+	^ (self paginatedRawDataFromUrl: (rawData at: 'comments_url'))
 		collect: [ :each | GitHubIssueComment new rawData: each ]
 ]
 

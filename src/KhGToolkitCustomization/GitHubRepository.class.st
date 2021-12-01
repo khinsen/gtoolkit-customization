@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'name'
 	],
-	#category : 'KhGToolkitCustomization-GitHub'
+	#category : #'KhGToolkitCustomization-GitHub'
 }
 
 { #category : #accessing }
@@ -43,7 +43,7 @@ GitHubRepository >> numberOfOpenIssues [
 
 { #category : #accessing }
 GitHubRepository >> openIssues [
-	^ (self rawDataFromUrl: (rawData at: 'issues_url'))
+	^ (self paginatedRawDataFromUrl: (rawData at: 'issues_url'))
 		collect: [ :each |
 			GitHubIssue new
 				repository: self;

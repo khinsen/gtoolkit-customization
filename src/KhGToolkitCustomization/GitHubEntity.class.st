@@ -62,6 +62,33 @@ GitHubEntity >> isStale [
 	^ (timeStamp - DateAndTime now) > 1 hour
 ]
 
+{ #category : #operating }
+GitHubEntity >> paginatedRawDataFromUrl: aString [
+	| url curlyBrace client data links |
+	url := aString copyUpTo: ${.
+	data := Array new.
+	[
+		client := GitHubAPI new jsonClient.
+		data := data, (client get: url).
+		links := client response headers at: #Link ifAbsent: [ nil ].
+		links ifNil: [ false ] ifNotNil: [
+			(self parseLinks: links) at: #next
+				ifPresent: [ :next | url := next. true ]
+				ifAbsent: [ false ] ]
+	] whileTrue.
+	^ data
+]
+
+{ #category : #operating }
+GitHubEntity >> parseLinks: aString [
+	^ (($, split: aString) collect: [ :each |
+		| parts url rel |
+		parts := $; split: each.
+		url := (parts first trimBoth findTokens: '<>') first.
+		rel := (parts second trimBoth findTokens: '"') second.
+		rel -> url ]) asDictionary
+]
+
 { #category : #initializing }
 GitHubEntity >> rawData: aDictionary [
 	rawData := aDictionary.

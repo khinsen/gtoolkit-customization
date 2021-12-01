@@ -58,7 +58,7 @@ GitHubRepositoryOwner >> gtRepositoriesFor: aView [
 GitHubRepositoryOwner >> repositories [
 	repositories ifNil: [
 		repositories := Dictionary new.
-		(self rawDataFromUrl: (rawData at: 'repos_url'))
+		(self paginatedRawDataFromUrl: (rawData at: 'repos_url'))
 			do: [ :each |
 				| repo |
 				repo := GitHubRepository new rawData: each.
