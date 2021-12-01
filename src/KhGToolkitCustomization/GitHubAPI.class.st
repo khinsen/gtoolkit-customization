@@ -5,20 +5,31 @@ Class {
 		'login',
 		'apiToken'
 	],
-	#category : 'KhGToolkitCustomization-GitHub'
+	#category : #'KhGToolkitCustomization-GitHub'
 }
 
 { #category : #accessing }
 GitHubAPI >> client [
 	| client |
-	client := ZnClient new.
-	apiToken ifNotNil: [ client username: login password: apiToken ].
+	client :=
+		ZnClient new
+			headerAt: 'Accept' put: 'application/vnd.github.v3+json'.
+	apiToken ifNotNil:
+		[ client username: login password: apiToken ].
 	^ client
 ]
 
 { #category : #initializing }
 GitHubAPI >> initialize [
 	self loadApiToken
+]
+
+{ #category : #accessing }
+GitHubAPI >> jsonClient [
+	| client |
+	client := self client.
+	client contentReader: [ :entity | NeoJSONReader fromString: entity contents ].
+	^ client
 ]
 
 { #category : #initializing }

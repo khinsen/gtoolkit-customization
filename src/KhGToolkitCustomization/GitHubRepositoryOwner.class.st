@@ -6,7 +6,7 @@ Class {
 		'avatarPicture',
 		'apiUrl'
 	],
-	#category : 'KhGToolkitCustomization-GitHub'
+	#category : #'KhGToolkitCustomization-GitHub'
 }
 
 { #category : #accessing }
@@ -69,7 +69,6 @@ GitHubRepositoryOwner >> repositories [
 { #category : #initializing }
 GitHubRepositoryOwner >> update [
 	self rawData:
-		(STON fromString:
-			(GitHubAPI new client
-				get: self apiUrl))
+		(GitHubAPI new jsonClient
+				get: self apiUrl)
 ]

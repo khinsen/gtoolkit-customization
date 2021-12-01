@@ -5,7 +5,7 @@ Class {
 		'rawData',
 		'timeStamp'
 	],
-	#category : 'KhGToolkitCustomization-GitHub'
+	#category : #'KhGToolkitCustomization-GitHub'
 }
 
 { #category : #accessing }
@@ -73,6 +73,5 @@ GitHubEntity >> rawData: aDictionary [
 GitHubEntity >> rawDataFromUrl: aString [
 	| url curlyBrace |
 	url := aString copyUpTo: ${.
-	^ STON fromString:
-		(GitHubAPI new client get: url)
+	^ GitHubAPI new jsonClient get: url.
 ]
