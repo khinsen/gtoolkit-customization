@@ -1,7 +1,7 @@
 Class {
 	#name : #KhHomeSection,
 	#superclass : #GtHomeSection,
-	#category : 'KhGToolkitCustomization-Home'
+	#category : #'KhGToolkitCustomization-Home'
 }
 
 { #category : #'api - instantiation' }
@@ -13,6 +13,7 @@ KhHomeSection >> create [
 	cardsContainer addChild: self reScienceCard.
 	cardsContainer addChild: self guixCard.
 	cardsContainer addChild: self zfsCard.
+	cardsContainer addChild: self zoteroCard.
 	sectionContainer addChild: cardsContainer.
 	^ sectionContainer
 ]
@@ -57,4 +58,18 @@ KhHomeSection >> zfsCard [
 				  with: (GtInspector createOn: Zfs pools)
 				  from: card ]
 		  description: 'ZFS Pools'
+]
+
+{ #category : #'api - instantiation' }
+KhHomeSection >> zoteroCard [
+	^ self
+		  newToolCardWithTitle: 'Zotero'
+		  icon: ((ZnEasy getPng: 'https://www.zotero.org/support/_media/logo/zotero_128x128x32.png')
+		  		 asGrayScaleWithAlpha scaledToSize: 64 @ 64) asElement
+		  action: [ :card | 
+			  self
+				  showSpaceWithTitle: 'Zotero'
+				  with: (GtInspector createOn: (ZtUser username: 'khinsen'))
+				  from: card ]
+		  description: 'Zotero'
 ]
