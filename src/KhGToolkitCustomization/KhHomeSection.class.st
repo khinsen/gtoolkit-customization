@@ -14,6 +14,7 @@ KhHomeSection >> create [
 	cardsContainer addChild: self guixCard.
 	cardsContainer addChild: self zfsCard.
 	cardsContainer addChild: self zoteroCard.
+	cardsContainer addChild: self halCard.
 	sectionContainer addChild: cardsContainer.
 	^ sectionContainer
 ]
@@ -30,6 +31,25 @@ KhHomeSection >> guixCard [
 				  with: (GtInspector createOn: GxChannels current packageCatalog)
 				  from: card ]
 		  description: 'Guix package catalog'
+]
+
+{ #category : #accessing }
+KhHomeSection >> halCard [
+	^ self
+		newHeaderCardWithTitle: 'HAL'
+		description: 'Read the Leibniz book'
+		size: 120 @ 120
+		content:
+			(BrLabel new
+				text: 'HAL';
+				aptitude: BrGlamorousLabelAptitude new
+					bold;
+				padding: (BlInsets all: 20)) asScalableElement
+		action: [ :card | 
+			 self
+				  showSpaceWithTitle: 'HAL'
+				  with: (GtInspector createOn: ((HalDocuments forHalId:  'konrad-hinsen')))
+				  from: card  ].
 ]
 
 { #category : #'api - instantiation' }
