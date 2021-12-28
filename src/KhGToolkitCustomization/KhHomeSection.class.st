@@ -37,7 +37,7 @@ KhHomeSection >> guixCard [
 KhHomeSection >> halCard [
 	^ self
 		newHeaderCardWithTitle: 'HAL'
-		description: 'Read the Leibniz book'
+		description: 'Publication list on HAL'
 		size: 120 @ 120
 		content:
 			(BrLabel new
