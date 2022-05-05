@@ -24,6 +24,18 @@ SQLiteDatabase >> file: aFileReference [
 	file := aFileReference
 ]
 
+{ #category : #inspecting }
+SQLiteDatabase >> gtTablesFor: aView [
+	<gtView>
+	^ aView columnedList
+		title: 'Tables';
+		priority: 1;
+		items: [ self tables ];
+		column: 'Name' text: #name;
+		column: 'Number of rows' text: #numberOfRows;
+		yourself
+]
+
 { #category : #initializing }
 SQLiteDatabase >> initialize [
 	file := nil.
