@@ -1,23 +1,6 @@
 Extension { #name : #AbstractFileReference }
 
 { #category : #'*KhGToolkitCustomization' }
-AbstractFileReference >> gtSqlTablesFor: aView [
-	<gtView>
-	(self isFile
-		and: [ self extension = 'db'
-				and: [ (self readStreamDo: [ :s | s next: 16 ])
-						= ('SQLite format 3',
-							Character null asString) ] ])
-		ifFalse: [ ^ aView empty ].
-	^ aView forward
-		title: 'SQLite tables';
-		priority: 10;
-		object: [ SQLiteDatabase file: self ];
-		view: #gtTablesFor:;
-		yourself
-]
-
-{ #category : #'*KhGToolkitCustomization' }
 AbstractFileReference >> khActionCopyPathFor: anAction [
 	<gtAction>
 	|  button |
