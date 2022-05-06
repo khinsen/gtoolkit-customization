@@ -16,6 +16,16 @@ SQLiteTable class >> properties: aDictionary in: aDatabase [
 ]
 
 { #category : #accessing }
+SQLiteTable >> columnNames [
+	^ self database
+		runSQL: '
+			SELECT *
+			FROM ', self name, ';'
+		with: [ :result |
+					result next columnNames ]
+]
+
+{ #category : #accessing }
 SQLiteTable >> database [
 	^ database
 ]
@@ -25,12 +35,26 @@ SQLiteTable >> database: aDatabase [
 	database := aDatabase
 ]
 
-{ #category : #accessing }
+{ #category : #inspecting }
+SQLiteTable >> gtDataFor: aView [
+	<gtView>
+	| view |
+	view := aView columnedList
+		title: 'Data';
+		priority: 1;
+		items: [ self rows ];
+		yourself.
+	self columnNames do: [ :each |
+		view column: each text: [ :row | row atName: each ] ].
+	^ view
+]
+
+{ #category : #inspecting }
 SQLiteTable >> gtSchemaFor: aView [
 	<gtView>
 	^ aView forward
 		title: 'Schema';
-		priority: 1;
+		priority: 5;
 		object: [ self schema ];
 		view: #gtStringFor:;
 		yourself
@@ -67,6 +91,17 @@ SQLiteTable >> properties [
 { #category : #accessing }
 SQLiteTable >> properties: aDictionary [
 	properties := aDictionary
+]
+
+{ #category : #accessing }
+SQLiteTable >> rows [
+	^ self database
+		runSQL: '
+			SELECT *
+			FROM ', self name, '
+			LIMIT 1000;'
+		with: [ :result |
+					result rows collect: [ :each | each ] ]
 ]
 
 { #category : #accessing }
