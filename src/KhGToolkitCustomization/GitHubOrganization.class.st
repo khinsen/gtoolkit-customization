@@ -7,7 +7,10 @@ Class {
 { #category : #accessing }
 GitHubOrganization class >> name: aString [
 	^ self allInstances
-		detect: [ :each | each name = aString and: [ each isStale not ] ]
+		detect: [ :each |
+			each isInitialized
+			and: [ each name = aString
+			and: [ each isStale not ] ] ]
 		ifNone: [
 			self new
 				apiUrl: 'https://api.github.com/orgs/', aString;

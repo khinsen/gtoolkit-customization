@@ -58,6 +58,11 @@ GitHubEntity >> initializeFromRawData [
 ]
 
 { #category : #testing }
+GitHubEntity >> isInitialized [
+	^ rawData isNotNil
+]
+
+{ #category : #testing }
 GitHubEntity >> isStale [
 	^ (timeStamp - DateAndTime now) > 1 hour
 ]
