@@ -1,6 +1,16 @@
 Extension { #name : #AbstractFileReference }
 
 { #category : #'*KhGToolkitCustomization' }
+AbstractFileReference >> gtFitsImageFor: aView [
+	<gtView>
+	(self isFile and: [ self extension asLowercase = 'fts' ]) ifFalse: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Picture';
+		priority: 10;
+		stencil: [ (KhFitsFile new fileReference: self) asForm asElement ]
+]
+
+{ #category : #'*KhGToolkitCustomization' }
 AbstractFileReference >> khActionCopyPathFor: anAction [
 	<gtAction>
 	|  button |
