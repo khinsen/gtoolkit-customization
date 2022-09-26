@@ -45,13 +45,12 @@ HalDocuments >> gtListFor: aView [
 ]
 
 { #category : #inspecting }
-HalDocuments >> gtSpotterForTitlesFor: aStep [
+HalDocuments >> gtSpotterForTitlesFor: aSearch [
 	<gtSearch>
-	^ aStep listProcessor
+	^ aSearch list
 		priority: 1;
 		title: 'Titles';
-		allCandidates: [ documents ];
-		filter: GtFilterSubstring;
-		candidatesLimit: 10;
+		items: [ documents ];
+		filterBySubstring;
 		itemName: #title
 ]
