@@ -10,6 +10,7 @@ KhHomeSection >> create [
 	sectionContainer := self newSectionContainer.
 	sectionContainer addChild: (self newSectionTitle: 'KH').
 	cardsContainer := self newCardsContainer.
+	cardsContainer addChild: self mastodonCard.
 	cardsContainer addChild: self reScienceCard.
 	cardsContainer addChild: self guixCard.
 	cardsContainer addChild: self zfsCard.
@@ -50,6 +51,22 @@ KhHomeSection >> halCard [
 				  showSpaceWithTitle: 'HAL'
 				  with: (GtInspector createOn: ((HalDocuments forHalId:  'konrad-hinsen')))
 				  from: card  ].
+]
+
+{ #category : #'api - instantiation' }
+KhHomeSection >> mastodonCard [
+	^ self
+		  newToolCardWithTitle: 'Mastodon'
+		  icon: (MdnLogo new size: 64) asElement
+		  action: [ :card |
+		  	| login |
+		  	login := (MdnServer url: 'https://scholar.social')
+				  		loginWithStoredCredentials.
+			  self
+				  showSpaceWithTitle: 'Mastodon'
+				  with: (GtInspector createOn: login)
+				  from: card ]
+		  description: 'Mastodon'
 ]
 
 { #category : #'api - instantiation' }
