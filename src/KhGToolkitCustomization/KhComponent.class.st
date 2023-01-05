@@ -132,6 +132,11 @@ KhComponent >> gtUnusedMethodsFor: aView [
 		yourself
 ]
 
+{ #category : #adding }
+KhComponent >> ignoreTraits: aSequence [
+	self subcomponents do: [ :each | each ignoreTraits: aSequence ].
+]
+
 { #category : #initializing }
 KhComponent >> initialize [
 	subcomponents := Set new.

@@ -1,6 +1,9 @@
 Class {
 	#name : #KhSingleClassComponent,
 	#superclass : #KhComponent,
+	#instVars : [
+		'ignoredMethods'
+	],
 	#category : #'KhGToolkitCustomization-ClassClusters'
 }
 
@@ -26,10 +29,12 @@ KhSingleClassComponent >> classifyMethods [
 
 { #category : #operating }
 KhSingleClassComponent >> classifyMethodsIn: aSetOfClasses [
-	| class |
+	| class methods |
 	class := self subcomponents anyOne.
 	externalMethodsWithSenders := IdentityDictionary new.
-	methodClassification := class methods groupedBy: [ :eachMethod |
+	methods := class methods reject: [ :each |
+		ignoredMethods includes: each selector ].
+	methodClassification := methods groupedBy: [ :eachMethod |
 		(self sendersOf: eachMethod selector in: aSetOfClasses)
 			ifEmpty: [ #unused ]
 			ifNotEmpty: [ :senders |
@@ -38,6 +43,18 @@ KhSingleClassComponent >> classifyMethodsIn: aSetOfClasses [
 					ifFalse: [
 						externalMethodsWithSenders at: eachMethod put: senders.
 						#external ] ] ]
+]
+
+{ #category : #adding }
+KhSingleClassComponent >> ignoreTraits: aSequence [
+	aSequence do: [ :each |
+		ignoredMethods addAll: (each methods collect: #selector) ]
+]
+
+{ #category : #initializing }
+KhSingleClassComponent >> initialize [
+	super initialize.
+	ignoredMethods := Set new.
 ]
 
 { #category : #operating }
