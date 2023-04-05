@@ -45,6 +45,10 @@ SLPin >> printOn: aStream [
 	super printOn: aStream.
 	aStream
 		<< $(;
+		<< self name;
+		<< ', ';
+		<< self node pathString;
+		<< ', ';
 		<< (STONJSON toString: rawData);
 		<< $).
 ]

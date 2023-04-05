@@ -41,7 +41,13 @@ SLPathFromNode >> printOn: aStream [
 
 { #category : #accessing }
 SLPathFromNode >> resolve [
-	path size = 1 ifTrue: [
-		^ self node pins at: path first
-			ifAbsent: self ]
+	| oneStep |
+	oneStep := self node itemAt: path first
+		ifAbsent: [ ^ self ].
+	^ path size > 1 ifTrue: [
+		(SLPathFromNode new
+			node: oneStep;
+			path: path allButFirst)
+			resolve ]
+		ifFalse: [ oneStep ]
 ]

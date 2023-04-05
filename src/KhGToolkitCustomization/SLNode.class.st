@@ -55,18 +55,9 @@ SLNode >> gtDataFor: aView [
 		yourself
 ]
 
-{ #category : #inspecting }
-SLNode >> gtPinsFor: aView [
-	<gtView>
-	self pins ifEmpty: [ ^ aView empty ].
-	^ aView columnedList
-		title: 'Pins';
-		priority: 1;
-		items: [ self pins associations ];
-		column: 'Name' text: #key;
-		column: 'Value' text: #value;
-		send: #value;
-		yourself
+{ #category : #accessing }
+SLNode >> itemAt: aString ifAbsent: aBlock [
+	aBlock value
 ]
 
 { #category : #accessing }
@@ -82,25 +73,6 @@ SLNode >> path [
 { #category : #accessing }
 SLNode >> pathString [
 	^ '/' join: self path
-]
-
-{ #category : #accessing }
-SLNode >> pinNamed: aString [
-	^ self pins at: aString
-]
-
-{ #category : #accessing }
-SLNode >> pins [
-	pins ifNil: [
-		pins :=
-			((rawData at: 'pins' ifAbsent: [Dictionary new])
-				associations collect: [ :each |
-					each key -> (SLPin new
-									rawData: each value;
-									node: self;
-									name: each key) ])
-					asDictionary ].
-	^ pins
 ]
 
 { #category : #printing }

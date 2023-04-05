@@ -19,7 +19,8 @@ SLWorkflow class >> fromFile: aFileReference [
 
 { #category : #visualizing }
 SLWorkflow >> asMondrian [
-	| view |
+	| arrowColor view |
+	arrowColor := Color blue alpha: 0.5.
 	view := GtMondrian new.
 	view nodes
 		stencil: [ :node | node node asElement ];
@@ -27,14 +28,24 @@ SLWorkflow >> asMondrian [
 	view edges
 		shape: [ :x |
 			BlLineElement new
+				toHead:
+					(BlArrowheadSimpleArrow new
+						border: (BlBorder
+									paint: arrowColor
+									width: 1));
 				border: (BlBorder
-							paint: (Color blue alpha: 0.5)
+							paint: arrowColor
 							width: 1) ];
 		connect: connections
 			from: [ :each | each key node ]
 			to: [ :each | each value node ].
 	view layout circle.
 	^ view
+]
+
+{ #category : #accessing }
+SLWorkflow >> connections [
+	^ connections
 ]
 
 { #category : #inspecting }
