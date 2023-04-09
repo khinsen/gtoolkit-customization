@@ -35,6 +35,19 @@ ZfsEntity >> files [
 ]
 
 { #category : #inspecting }
+ZfsEntity >> gtAutoSnapshotsFor: aView [
+	<gtView>
+	self snapshots ifEmpty: [ ^ aView empty ].
+	^ aView list
+		title: 'Auto-Snapshots';
+		priority: 2;
+		items: [ self snapshots select: [ :each |
+					(each name findString: 'zfs-auto-snap') > 0] ];
+		itemText: [ :each | each name ];
+		yourself
+]
+
+{ #category : #inspecting }
 ZfsEntity >> gtFilesFor: aView [
 	<gtView>
 	self files ifNil: [ ^ aView empty ].
@@ -68,7 +81,8 @@ ZfsEntity >> gtSnapshotsFor: aView [
 	^ aView list
 		title: 'Snapshots';
 		priority: 1;
-		items: [ self snapshots ];
+		items: [ self snapshots select: [ :each |
+					(each name findString: 'zfs-auto-snap') isZero ] ];
 		itemText: [ :each | each name ];
 		yourself
 ]

@@ -23,7 +23,7 @@ ZfsPool >> gtDatasetsFor: aView [
 	<gtView>
 	^ aView list
 		title: 'Datasets';
-		priority: 1;
+		priority: 3;
 		items: [ self datasets ];
 		itemText: [ :each | each name ];
 		yourself
