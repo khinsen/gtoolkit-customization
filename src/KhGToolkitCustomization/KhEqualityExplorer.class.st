@@ -5,7 +5,7 @@ Class {
 		'object2',
 		'object1'
 	],
-	#category : 'KhGToolkitCustomization-Tools'
+	#category : #'KhGToolkitCustomization-Tools'
 }
 
 { #category : #'instance creation' }
@@ -26,7 +26,6 @@ KhEqualityExplorer >> equalityOf: a and: b [
 { #category : #inspecting }
 KhEqualityExplorer >> equalityReport [
 	| slots1 slots2 commonSlots report |
-	#(object class slotNames slotValues).
 	slots1 := object1 class allInstVarNames sorted.
 	slots2 := object2 class allInstVarNames sorted.
 	commonSlots := (slots1 intersection: slots2) sorted.
